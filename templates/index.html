@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<header>
+    <h2>Recent news</h2>
+</header>
+<main>
+    {% if news %}
+        <table class="table table-striped" data-bs-theme="dark">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in news %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ row['Date'] }}</td>
+                    <td><a href="{{ row['Link'] }}">{{ row['Title'] }}</a></td>
+                    <td>
+                        <a type="button" class="btn btn-outline-light" href="{{ url_for('new_analysis', index=loop.index) }}">Analyze</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h5>Error loading news</h5>
+        <a type="button" class="btn btn-link" href="/">Retry</a>
+    {% endif %}
+
+    <div class="container text-center">
+        <div class="row align-items-center">
+            <div id="chart1" class="col-10"></div>
+        </div>
+    </div>
+
+    <!-- Plotly CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var grapth1 = {{ graphJSON | safe }}
+        Plotly.plot('chart1', grapth1, {})
+    </script>
+</main>
+{% endblock %}
