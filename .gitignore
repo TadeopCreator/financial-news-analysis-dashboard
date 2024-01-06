@@ -1,5 +1,6 @@
 application_default_credentials.json
 
+.env
 .idea/
 .vscode/
 __pycache__/
