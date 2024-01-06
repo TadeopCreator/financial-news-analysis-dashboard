@@ -5,32 +5,96 @@
     <h2>Recent news</h2>
 </header>
 <main>
-    {% if news %}
-        <table class="table table-striped" data-bs-theme="dark">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Title</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in news %}
-                <tr>
-                    <th scope="row">{{ loop.index }}</th>
-                    <td>{{ row['Date'] }}</td>
-                    <td><a href="{{ row['Link'] }}">{{ row['Title'] }}</a></td>
-                    <td>
-                        <a type="button" class="btn btn-outline-light" href="{{ url_for('new_analysis', index=loop.index) }}">Analyze</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <h5>Error loading news</h5>
-        <a type="button" class="btn btn-link" href="/">Retry</a>
-    {% endif %}
+    <div id="newsTable">
+        {% for i in range(10) %}
+        <p class="placeholder-glow">
+            <span class="placeholder placeholder-lg col-11 mb-2"></span>
+        </p>
+        {% endfor %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Realizar una solicitud AJAX al endpoint de Flask para obtener las noticias
+            $.ajax({
+                url: '/get_news', // Ruta en Flask para obtener las noticias
+                method: 'GET',
+                success: function(data) {
+
+                    console.log("Data: " + data)
+
+                    //const news = JSON.parse(data);
+                    news = data
+
+                    const newsTable = document.getElementById('newsTable');                    
+
+                    // Create a table
+                    const table = document.createElement('table');
+                    table.classList.add('table', 'table-striped');
+                    table.setAttribute('data-bs-theme', 'dark');
+
+                    // Create table header (thead)
+                    const thead = document.createElement('thead');
+                    const theadRow = document.createElement('tr');
+
+                    ['#', 'Date', 'Title'].forEach(headerText => {
+                        const th = document.createElement('th');
+                        th.textContent = headerText;
+                        theadRow.appendChild(th);
+                    });
+
+                    thead.appendChild(theadRow);
+                    table.appendChild(thead);
+
+                    // Create table body (tbody)
+                    const tbody = document.createElement('tbody');
+
+                    news.forEach((item, index) => {
+                        const row = document.createElement('tr');
+
+                        const cellNumber = document.createElement('th');
+                        cellNumber.setAttribute('scope', 'row');
+                        cellNumber.textContent = index + 1;
+                        row.appendChild(cellNumber);
+
+                        const cellDate = document.createElement('td');
+                        cellDate.textContent = item.time_published;
+                        row.appendChild(cellDate);
+
+                        const cellTitle = document.createElement('td');
+                        const titleLink = document.createElement('a');
+                        titleLink.setAttribute('target', '_blank');
+                        titleLink.setAttribute('href', item.url);
+                        titleLink.textContent = item.title;
+                        cellTitle.appendChild(titleLink);
+                        row.appendChild(cellTitle);
+
+                        const cellAnalysis = document.createElement('td');
+                        const analysisLink = document.createElement('a');
+                        analysisLink.setAttribute('type', 'button');
+                        analysisLink.classList.add('btn', 'btn-outline-light');
+                        analysisLink.setAttribute('href', '/new_analysis?index=' + (index + 1)); // Adjust href as per your Flask route
+                        analysisLink.textContent = 'Analyze';
+                        cellAnalysis.appendChild(analysisLink);
+                        row.appendChild(cellAnalysis);
+
+                        tbody.appendChild(row);
+                    });
+
+                    table.appendChild(tbody);
+
+                    newsTable.innerHTML = '';
+
+                    // Add the table to the desired container in your HTML
+                    newsTable.appendChild(table);
+                },
+                error: function(error) {
+                    console.log('Error al obtener las noticias:', error);
+                }
+            });
+        });
+    </script>
 
     <div class="container text-center">
         <div class="row align-items-center">
