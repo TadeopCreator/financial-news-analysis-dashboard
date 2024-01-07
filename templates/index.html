@@ -74,7 +74,7 @@
                         const analysisLink = document.createElement('a');
                         analysisLink.setAttribute('type', 'button');
                         analysisLink.classList.add('btn', 'btn-outline-light');
-                        analysisLink.setAttribute('href', '/new_analysis?index=' + (index + 1)); // Adjust href as per your Flask route
+                        analysisLink.setAttribute('href', '/new_analysis/' + (index + 1)); // Adjust href as per your Flask route
                         analysisLink.textContent = 'Analyze';
                         cellAnalysis.appendChild(analysisLink);
                         row.appendChild(cellAnalysis);
