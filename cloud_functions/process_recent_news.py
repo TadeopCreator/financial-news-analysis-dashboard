@@ -3,21 +3,23 @@ import requests
 import ccxt
 import yfinance as yf
 from datetime import datetime
+import functions_framework
 from google.cloud import firestore
-from dotenv import load_dotenv
 
 NEWS_AMOUNT = 20
 
 news_list = []
 
-def processing():
+def env_vars():
+    return str(os.environ.get("ALPHAVANTAGE_API", "Specified environment variable is not set."))
+
+@functions_framework.cloud_event
+def process_recent_news(cloud_event):
     global news_list
     news_list = []
 
-    load_dotenv()
-
     try:        
-        p_k = os.environ['ALPHAVANTAGE_API']
+        p_k = env_vars()
 
         url = 'https://www.alphavantage.co/query?function=NEWS_SENTIMENT&limit=20&apikey=' + p_k
         r = requests.get(url)
@@ -48,11 +50,6 @@ def processing():
     counter = 0
 
     for selected_new_info in news_list:
-        counter += 1
-
-        if counter > NEWS_AMOUNT:
-            break
-
         # If there is no assets, don't save the article
         if not selected_new_info['ticker_sentiment']:
             print('No assets error')
@@ -80,9 +77,22 @@ def processing():
                         asset['risk'] = 10                    
                     else:
                         ticker_info = yf.Ticker(ticker)
-                        asset['name'] = ticker_info.info['shortName']
-                        asset['price'] = ticker_info.info['currentPrice']
-                        asset['exchange'] = ticker_info.info['exchange']
+
+                        if 'currentPrice' in ticker_info.info:
+                            asset['price'] = ticker_info.info['currentPrice']
+                        else:
+                            # if ticker dont have current price, not include it
+                            continue
+
+                        if 'shortName' in ticker_info.info:
+                            asset['name'] = ticker_info.info['shortName']
+                        else:
+                            asset['name'] = ticker
+
+                        if 'exchange' in ticker_info.info:
+                            asset['exchange'] = ticker_info.info['exchange']
+                        else:
+                            asset['exchange'] = "Unknown"
 
                         if 'overallRisk' in ticker_info.info:
                             asset['risk'] = ticker_info.info['overallRisk']
@@ -111,5 +121,12 @@ def processing():
             db.collection("news").document().set(selected_new_info)
 
             print("Saved into Firestore")
+
+            # Count the number of valid news
+            counter += 1
+
+            if counter > NEWS_AMOUNT:
+                print("News loaded")
+                break
         else:
             print('No valid symbols')
