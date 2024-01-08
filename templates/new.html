@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<header>
+    {% if message %}
+        <div class="alert alert-dark" role="alert">
+            <p>{{ message }}</p>
+        </div>
+    {% endif %}
+    <h2>New Analysis</h2>
+    <hr/>
+</header>
+<main>
+    <div class="container">
+    {% if new %}
+        <div class="container mt-4">
+                <div class="d-flex">
+                    <div class="col-10">
+                        <h3 class="fs-1">{{ new['title'] }}</h3>
+                    </div>
+                    <div class="col-2">
+                        <a type="button" class="btn btn-dark mt-2 align-items-start" href="{{ new['url'] }}" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16" style="fill: white;">
+                                <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5"/>
+                                <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>           
+    
+            <p class="fw-dark">{{ new['time_published'] }} - {{ new['source'] }}</p>
+            {% if new['topics'] %}
+                <div class="row mb-3">
+                    <div class="d-flex flex-row">
+                    {% for topic in new['topics'] %}
+                        <span class="border border-dark rounded me-2 p-2">{{ topic['topic'] }}</span>
+                    {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% if new['banner_image'] %}
+                <div class="container col-md-8 mb-4">
+                    <img class="img-fluid rounded" src="{{ new['banner_image'] }}" alt="Banner Image">
+                </div>
+            {% endif %}
+
+            <h3 class="mb-4">Brief</h3>
+            <p class="fw-normal mt-3">{{ new['summary'] }}</p>            
+
+            {% if new['ticker_sentiment'] %}
+                <h3 class="mb-4">Related Assets</h3>
+                <div class="container mt-4">
+                    <div class="row">
+                    <!-- Loop through assets and create Bootstrap cards -->
+                    {% for asset in new['ticker_sentiment'] %}
+                        <div class="card col-md-6 mb-4 me-2" style="width: 18rem;">
+                            <div class="card-body">
+                            <h5 class="card-title">{{ asset['ticker'] }}</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                            <li class="list-group-item">{{ asset['type'] }}</li>
+                            <li class="list-group-item">{{ asset['ticker_sentiment_label'] }}</li>
+                            <li class="list-group-item">{{ asset['ticker_sentiment_score'] }}</li>
+                            </ul>
+                            <div class="card-body d-flex">                                
+                                <a href="https://www.tradingview.com/symbols/{{ asset['ticker'] }}/" target="_blank"  type="button" class="btn btn-outline-dark">See on Tradingview</a>
+                            </div>
+                        </div>
+                    {% endfor %}                    
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- <form action="{{ url_for('news_insights') }}" method="post">
+                <input type="hidden" name="data" value="Esto es informacion">
+                <button type="submit" class="btn btn-primary">Send data</button>
+            </form>    -->
+        </div>
+    {% else %}
+        <p>Load error</p>
+        <a href="/" type="button" class="btn btn-dark">Go to Home</a>
+    {% endif %}
+    </div>
+</main>
+{% endblock %}

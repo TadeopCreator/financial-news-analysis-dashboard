@@ -1,5 +1,18 @@
 body {
-    background-color: #212529;
-    color: #fff;
+    //background-color: #212529;
+    //color: #fff;
     padding-top: 70px;
 }
+
+// Set black color text to a
+a, a:hover, a:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+hr {    
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 2px solid rgba(0, 0, 0, 0.3);
+  }

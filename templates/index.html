@@ -2,17 +2,22 @@
 
 {% block body %}
 <header>
-    <h2>Recent news</h2>
+    <h2 class="mb-3">Recent news</h2>
+    <hr/>
 </header>
 <main>
-    <div id="newsTable">
-        {% for i in range(10) %}
-        <p class="placeholder-glow">
-            <span class="placeholder placeholder-lg col-11 mb-2"></span>
-        </p>
-        {% endfor %}
+    <div class="shadow mb-4 bg-body-tertiary rounded">
+        <div class="accordion" id="accordionExample">
+            {% for i in range(10) %}
+            <p class="placeholder-glow p-3">
+                <span class="placeholder placeholder-lg col-12 mb-2"></span>
+            </p>
+            {% endfor %}
+        </div>
     </div>
 
+    <div id="pagination"></div>
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -21,92 +26,165 @@
                 url: '/get_news', // Ruta en Flask para obtener las noticias
                 method: 'GET',
                 success: function(data) {
-
-                    console.log("Data: " + data)
-
-                    //const news = JSON.parse(data);
                     news = data
+                    page = parseInt({{ current_page }})                    
+                    newsNumber = news.length
 
-                    const newsTable = document.getElementById('newsTable');                    
+                    const accordionContainer = document.getElementById('accordionExample');
 
-                    // Create a table
-                    const table = document.createElement('table');
-                    table.classList.add('table', 'table-striped');
-                    table.setAttribute('data-bs-theme', 'dark');
+                    accordionContainer.innerHTML = ''
 
-                    // Create table header (thead)
-                    const thead = document.createElement('thead');
-                    const theadRow = document.createElement('tr');
+                    news.forEach((noticia, index) => {
+                        // Crear elementos del acordeón
+                        const accordionItem = document.createElement('div');
+                        accordionItem.classList.add('accordion-item');
 
-                    ['#', 'Date', 'Title'].forEach(headerText => {
-                        const th = document.createElement('th');
-                        th.textContent = headerText;
-                        theadRow.appendChild(th);
-                    });
+                        const accordionHeader = document.createElement('h2');
+                        accordionHeader.classList.add('accordion-header');
 
-                    thead.appendChild(theadRow);
-                    table.appendChild(thead);
+                        const button = document.createElement('button');
+                        button.classList.add('accordion-button', 'collapsed');
+                        button.setAttribute('type', 'button');
+                        button.setAttribute('data-bs-toggle', 'collapse');
+                        button.setAttribute('data-bs-target', `#collapse${index + 1}`);
+                        button.setAttribute('aria-expanded', 'false');
+                        button.setAttribute('aria-controls', `collapse${index + 1}`);
 
-                    // Create table body (tbody)
-                    const tbody = document.createElement('tbody');
+                        // Contenido del botón
+                        const divContainer1 = document.createElement('div');
+                        divContainer1.classList.add('container', 'text-start');
+                        divContainer1.textContent = (page-1)*20 + index + 1;
 
-                    news.forEach((item, index) => {
-                        const row = document.createElement('tr');
+                        const divContainer2 = document.createElement('div');
+                        divContainer2.classList.add('container', 'col-2', 'text-start');
+                        divContainer2.textContent = noticia.time_published;
 
-                        const cellNumber = document.createElement('th');
-                        cellNumber.setAttribute('scope', 'row');
-                        cellNumber.textContent = index + 1;
-                        row.appendChild(cellNumber);
+                        const divContainer3 = document.createElement('div');
+                        divContainer3.classList.add('container', 'col-6', 'text-start', 'fs-6');                        
+                        externalLink = document.createElement('a');
+                        externalLink.classList.add('text-reset');
+                        externalLink.setAttribute('href', noticia.url);
+                        externalLink.setAttribute('target', '_blank');
+                        externalLink.textContent = noticia.title;
+                        divContainer3.appendChild(externalLink);
 
-                        const cellDate = document.createElement('td');
-                        cellDate.textContent = item.time_published;
-                        row.appendChild(cellDate);
+                        const divContainer4 = document.createElement('div');
+                        divContainer4.classList.add('container', 'col-3', 'text-start');
 
-                        const cellTitle = document.createElement('td');
-                        const titleLink = document.createElement('a');
-                        titleLink.setAttribute('target', '_blank');
-                        titleLink.setAttribute('href', item.url);
-                        titleLink.textContent = item.title;
-                        cellTitle.appendChild(titleLink);
-                        row.appendChild(cellTitle);
+                        noticia.ticker_sentiment.forEach(ticker => {
+                            const spanBadge = document.createElement('span');
+                            if (ticker.ticker_sentiment_label.includes("Bullish")) {
+                                spanBadge.classList.add('badge', 'text-bg-success', 'mb-1', 'me-1');
+                            }
+                            else if (ticker.ticker_sentiment_label.includes("Bearish")) {
+                                spanBadge.classList.add('badge', 'text-bg-danger', 'mb-1', 'me-1');
+                            } else {
+                                spanBadge.classList.add('badge', 'text-bg-secondary', 'mb-1', 'me-1');
+                            }
 
-                        const cellAnalysis = document.createElement('td');
+                            spanBadge.textContent = ticker.ticker;
+                            divContainer4.appendChild(spanBadge);
+                        });
+
+                        // Adjuntar los elementos al botón
+                        button.appendChild(divContainer1);
+                        button.appendChild(divContainer2);
+                        button.appendChild(divContainer3);
+                        button.appendChild(divContainer4);
+
+                        // Adjuntar botón al encabezado del acordeón
+                        accordionHeader.appendChild(button);
+
+                        // Crear el cuerpo del acordeón
+                        const accordionCollapse = document.createElement('div');
+                        accordionCollapse.classList.add('accordion-collapse', 'collapse');
+                        accordionCollapse.setAttribute('id', `collapse${index + 1}`);
+                        accordionCollapse.setAttribute('data-bs-parent', '#accordionExample');
+
+                        const accordionBody = document.createElement('div');
+                        accordionBody.classList.add('accordion-body');
+                        //accordionBody.innerHTML = `${noticia.summary}`;
                         const analysisLink = document.createElement('a');
                         analysisLink.setAttribute('type', 'button');
-                        analysisLink.classList.add('btn', 'btn-outline-light');
-                        analysisLink.setAttribute('href', '/new_analysis/' + (index + 1)); // Adjust href as per your Flask route
+                        analysisLink.classList.add('btn', 'btn-outline-dark');
+                        analysisLink.setAttribute('href', '/new/' + (index + 1)); // Adjust href as per your Flask route
                         analysisLink.textContent = 'Analyze';
-                        cellAnalysis.appendChild(analysisLink);
-                        row.appendChild(cellAnalysis);
+                        accordionBody.appendChild(analysisLink);
 
-                        tbody.appendChild(row);
-                    });
+                        // Adjuntar cuerpo al colapso del acordeón
+                        accordionCollapse.appendChild(accordionBody);
 
-                    table.appendChild(tbody);
+                        // Adjuntar encabezado y colapso al ítem del acordeón
+                        accordionItem.appendChild(accordionHeader);
+                        accordionItem.appendChild(accordionCollapse);                        
 
-                    newsTable.innerHTML = '';
+                        // Adjuntar ítem del acordeón al contenedor principal
+                        accordionContainer.appendChild(accordionItem);
+                    });                    
 
-                    // Add the table to the desired container in your HTML
-                    newsTable.appendChild(table);
+                    const paginationContainer = document.getElementById('pagination')
+
+                    const pag = document.createElement('div')
+                    pag.classList.add('d-flex', 'justify-content-center')
+
+                    const navContainer = document.createElement('nav')
+                    navContainer.setAttribute('aria-label', 'Page navigation example')
+
+                    const ulContainer = document.createElement('ul')
+                    ulContainer.classList.add('pagination')
+
+                    const liPreviousContainer = document.createElement('li')
+                    liPreviousContainer.classList.add('page-item')
+
+                    const pageItemPrevious = document.createElement('a')
+                    pageItemPrevious.classList.add('page-link')
+                    pageItemPrevious.setAttribute('href', '/?page=' + parseInt(page-1))
+                    pageItemPrevious.setAttribute('aria-label', 'Previous')
+                    if (page <= 1) {
+                        pageItemPrevious.classList.add('disabled');
+                    }
+                    const spanPrevious = document.createElement('span')
+                    spanPrevious.setAttribute('aria-hidden', 'true')
+                    spanPrevious.textContent = '«'
+                    pageItemPrevious.appendChild(spanPrevious)
+                    liPreviousContainer.appendChild(pageItemPrevious)
+
+                    const liFirstItemPage = document.createElement('li')
+
+                    const pageItemFirst = document.createElement('a')
+                    pageItemFirst.classList.add('page-link')
+                    pageItemFirst.setAttribute('href', '/?page=' + parseInt(page))
+                    pageItemFirst.textContent = page
+                    liFirstItemPage.appendChild(pageItemFirst)
+
+                    const liNextContainer = document.createElement('li')
+                    liNextContainer.classList.add('page-item')
+
+                    const pageItemNext = document.createElement('a')
+                    pageItemNext.classList.add('page-link')
+                    pageItemNext.setAttribute('href', '/?page=' + parseInt(page+1))
+                    pageItemNext.setAttribute('aria-label', 'Next')
+                    const spanNext = document.createElement('span')
+                    spanNext.setAttribute('aria-hidden', 'true')
+                    spanNext.textContent = '»'
+                    if (newsNumber < 20) {
+                        pageItemNext.classList.add('disabled');
+                    }
+                    pageItemNext.appendChild(spanNext)
+                    liNextContainer.appendChild(pageItemNext)
+
+                    ulContainer.appendChild(liPreviousContainer)
+                    ulContainer.appendChild(liFirstItemPage)
+                    ulContainer.appendChild(liNextContainer)
+                    navContainer.appendChild(ulContainer)
+                    pag.appendChild(navContainer)
+                    paginationContainer.appendChild(pag)
                 },
                 error: function(error) {
                     console.log('Error al obtener las noticias:', error);
                 }
             });
         });
-    </script>
-
-    <div class="container text-center">
-        <div class="row align-items-center">
-            <div id="chart1" class="col-10"></div>
-        </div>
-    </div>
-
-    <!-- Plotly CDN -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script>
-        var grapth1 = {{ graphJSON | safe }}
-        Plotly.plot('chart1', grapth1, {})
     </script>
 </main>
 {% endblock %}

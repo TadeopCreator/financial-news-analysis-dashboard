@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<header>
+    <h2>News Insights</h2>
+    <hr/>
+</header>
+<main>
+    <p>Este es un ejemplo de HTML template text.</p>
+
+    <div class="container text-center">
+        <div class="row align-items-center">
+            <div id="chart1" class="col-10"></div>
+        </div>
+    </div>
+
+    <!-- Plotly CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var grapth1 = {{ graphJSON | safe }}
+        Plotly.plot('chart1', grapth1, {})
+    </script>
+    
+</main>
+{% endblock %}
