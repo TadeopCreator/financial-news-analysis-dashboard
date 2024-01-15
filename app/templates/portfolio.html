@@ -1,0 +1,165 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<header>
+    <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Hey!</strong> This page is currently under development.       
+    </div> -->
+    <h2>Portfolio</h2>
+    <hr/>
+</header>
+<mai>
+
+    <div class="btn-group mb-4">
+        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+          Wallets
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">High Sentiment, all risks, short allowed</a></li>
+          <li><a class="dropdown-item" href="#">High Sentiment, medium risk, short allowed</a></li>
+          <li><a class="dropdown-item" href="#">High Sentiment, low risk, short allowed</a></li>
+          <li><a class="dropdown-item" href="#">High Sentiment, all risks, short not allowed</a></li>
+          <li><a class="dropdown-item" href="#">High Sentiment, medium risk, short not allowed</a></li>
+          <li><a class="dropdown-item" href="#">High Sentiment, low risk, short not allowed</a></li>
+          
+          <li><a class="dropdown-item" href="#">Low Sentiment, all risks, short allowed</a></li>
+          <li><a class="dropdown-item" href="#">Low Sentiment, medium risk, short allowed</a></li>
+          <li><a class="dropdown-item" href="#">Low Sentiment, low risk, short allowed</a></li>
+          <li><a class="dropdown-item" href="#">Low Sentiment, all risks, short not allowed</a></li>
+          <li><a class="dropdown-item" href="#">Low Sentiment, medium risk, short not allowed</a></li>
+          <li><a class="dropdown-item" href="#">Low Sentiment, low risk, short not allowed</a></li>
+        </ul>
+    </div>
+
+    <h3 class="mb-4">All orders</h3>
+    <p class="mb-4">Last 10 completed orders</p>
+
+    <div class="shadow mb-4 bg-body-tertiary rounded">
+        <div class="accordion" id="accordionExample">
+            {% for i in range(10) %}
+            <p class="placeholder-glow p-3">
+                <span class="placeholder placeholder-lg col-12 mb-2"></span>
+            </p>
+            {% endfor %}
+        </div>
+    </div>    
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Realizar una solicitud AJAX al endpoint de Flask para obtener las noticias
+            $.ajax({
+                url: '/get_orders', // Ruta en Flask para obtener las noticias
+                method: 'GET',
+                success: function(orders) {
+                    console.log(orders)
+
+                    const accordionContainer = document.getElementById('accordionExample');
+
+                    accordionContainer.innerHTML = ''
+
+                    orders.forEach((order, index) => {
+                        // Crear elementos del acordeón
+                        const accordionItem = document.createElement('div');
+                        accordionItem.classList.add('accordion-item');
+
+                        const accordionHeader = document.createElement('h2');
+                        accordionHeader.classList.add('accordion-header');
+
+                        const button = document.createElement('button');
+                        button.classList.add('accordion-button', 'collapsed');
+                        button.setAttribute('type', 'button');
+                        button.setAttribute('data-bs-toggle', 'collapse');
+                        button.setAttribute('data-bs-target', `#collapse${index + 1}`);
+                        button.setAttribute('aria-expanded', 'false');
+                        button.setAttribute('aria-controls', `collapse${index + 1}`);                        
+
+                        const divContainerDate = document.createElement('div');
+                        divContainerDate.classList.add('container', 'col-2', 'text-start');
+                        divContainerDate.textContent = order.date;                                        
+
+                        const divContainerTicker = document.createElement('div');
+                        divContainerTicker.classList.add('container', 'col-1', 'text-start', 'fs-6');                        
+                        externalLink = document.createElement('span');                                                
+                        divContainerTicker.textContent = order.ticker;
+
+                        const divContainerDirection = document.createElement('div');
+                        divContainerDirection.classList.add('container', 'col-1', 'text-start');
+                        if (order.direction == 0) {
+                            divContainerDirection.textContent = "LONG"
+                        }
+                        else {
+                            divContainerDirection.textContent = "SHORT"
+                        }                        
+
+                        const divContainerPl = document.createElement('div');
+                        divContainerPl.classList.add('container', 'col-1', 'text-start');
+                        divContainerPl.textContent = Math.round(order.pl_percent * 100) / 100 + "%"
+
+                        const divContainerTerm = document.createElement('div');
+                        divContainerTerm.classList.add('container', 'col-1', 'text-start');
+                        divContainerTerm.textContent = order.term                                            
+
+                        // Adjuntar los elementos al botón                        
+                        button.appendChild(divContainerDate)
+                        button.appendChild(divContainerTicker)
+                        button.appendChild(divContainerDirection)                        
+                        button.appendChild(divContainerPl)
+                        button.appendChild(divContainerTerm)                        
+                        
+                        // Adjuntar botón al encabezado del acordeón
+                        accordionHeader.appendChild(button);
+
+                        // Crear el cuerpo del acordeón
+                        const accordionCollapse = document.createElement('div');
+                        accordionCollapse.classList.add('accordion-collapse', 'collapse');
+                        accordionCollapse.setAttribute('id', `collapse${index + 1}`);
+                        accordionCollapse.setAttribute('data-bs-parent', '#accordionExample');
+
+                        const accordionBody = document.createElement('div');
+                        accordionBody.classList.add('accordion-body');
+
+                        const detailsContainer = document.createElement('div');
+                        detailsContainer.classList.add('flex', 'justify-content-start', 'm-2')
+                        const textTicker = document.createElement('span')
+                        textTicker.classList.add('row')
+                        textTicker.textContent = 'Ticker: ' + order.ticker
+
+                        const textExchange = document.createElement('span')
+                        textExchange.classList.add('row')
+                        textExchange.textContent = 'Exchange: ' + order.exchange
+
+                        const textDirection = document.createElement('span')
+                        textDirection.classList.add('row')
+                        textDirection.textContent = 'Direction: ' + divContainerDirection.textContent
+
+                        const textRisk = document.createElement('span')
+                        textRisk.classList.add('row')
+                        textRisk.textContent = 'Risk: ' + order.risk
+
+                        detailsContainer.appendChild(textTicker);
+                        detailsContainer.appendChild(textExchange);
+                        detailsContainer.appendChild(textDirection);
+                        detailsContainer.appendChild(textRisk);
+                        accordionBody.appendChild(detailsContainer);
+
+                        // Adjuntar cuerpo al colapso del acordeón
+                        accordionCollapse.appendChild(accordionBody);
+
+                        // Adjuntar encabezado y colapso al ítem del acordeón
+                        accordionItem.appendChild(accordionHeader);
+                        accordionItem.appendChild(accordionCollapse);                        
+
+                        // Adjuntar ítem del acordeón al contenedor principal
+                        accordionContainer.appendChild(accordionItem);
+                    });                    
+                },
+                error: function(error) {
+                    console.log('Error when get orders: ', error);
+                }
+            });
+        });
+
+    </script>
+{% endblock %}
