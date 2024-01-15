@@ -1,0 +1,227 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<header>
+    <h2>News Insights</h2>
+    <hr/>
+</header>
+<main>
+    <p>Access comprehensive market insights including news volume, asset detection, sentiment summary, and market overview.</p>    
+
+    <div class="row justify-content-center">        
+        <div id="main-insights" class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+            <br><br><br><br><br>
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border m-5" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            <br><br><br><br><br>
+        </div>      
+    </div>
+
+    <br>
+    <h3 class="mb-4">Last week</h3>
+
+    <div class="row justify-content-center" id="row-last-week">
+        <div class="container col-lg-5 border rounded-4 shadow m-2">
+            <div id="chart1">
+                <br><br><br><br><br>
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border m-5" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <br><br><br><br><br>        
+            </div>
+        </div>
+        <div class="container col-lg-5 border rounded-4 shadow m-2">
+            <div id="chart4">
+                <br><br><br><br><br>
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border m-5" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <br><br><br><br><br>   
+            </div>
+        </div>
+        <div class="container col-lg-5 border rounded-4 shadow m-2">
+            <div id="chart2">
+                <br><br><br><br><br>
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border m-5" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <br><br><br><br><br>
+            </div>
+        </div>
+        <div class="container col-lg-5 border rounded-4 shadow m-2">
+            <div id="chart3">
+                <br><br><br><br><br>
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border m-5" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <br><br><br><br><br>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        window.addEventListener('resize', function(event) {        
+            $.getJSON({
+                url: "/callback_graph_1", success: function (result) {                    
+                    Plotly.newPlot('chart1', result, {staticPlot: true});
+                }
+            });
+
+            $.getJSON({
+                url: "/callback_graph_2", success: function (result) {
+                    Plotly.newPlot('chart2', result, {staticPlot: true});
+                }
+            });
+
+            $.getJSON({
+                url: "/callback_graph_3", success: function (result) {
+                    Plotly.newPlot('chart3', result, {staticPlot: true});
+                }
+            });
+
+            $.getJSON({
+                url: "/callback_graph_4", success: function (result) {
+                    Plotly.newPlot('chart4', result, {staticPlot: true});
+                }
+            });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {            
+            $.ajax({                
+                url: '/get_graphs', // Ruta en Flask para obtener las noticias
+                method: 'GET',
+
+                success: function(data) {                    
+                    insights = data[0]
+                    
+                    const container = document.createElement('div');                    
+                    
+                    // Crear el primer div con la clase fs-1 y fw-bold
+                    var fs1Div = document.createElement('div');
+                    fs1Div.classList.add('fs-1', 'fw-bold');
+                    fs1Div.textContent = insights["news_total_count"]
+
+                    // Crear el segundo div con la clase fw-light, pb-2, border-bottom y mb-4
+                    var fwLightDiv = document.createElement('div');
+                    fwLightDiv.classList.add('fw-light', 'pb-2', 'border-bottom', 'mb-4');
+                    fwLightDiv.textContent = 'News analyzed';
+                    
+                    // Crear el tercer div con la clase ms-4
+                    var ms4Div = document.createElement('div');
+                    ms4Div.classList.add('ms-4');
+                    
+                    // Crear las divisiones internas con sus respectivas clases y contenido
+                    var categories = ['Assets', 'EQUITY', 'INDEX', 'ETF', 'FOREX', 'CRYPTO', 'ECNQUOTE', 'MUTUAL FUND', 'undefined'];
+                    for (var i = 0; i < categories.length; i++) {
+                        var categoryDiv = document.createElement('div')
+                        categoryDiv.classList.add('text-start', 'mb-2')
+                        if (categories[i] == 'Assets') {
+                            categoryDiv.textContent = "Total Assets: " + insights['total_assets']
+                        }
+                        else if (categories[i] == 'MUTUAL FUND') {
+                            categoryDiv.textContent = "MUTUAL FUND: " + insights['total_mutualfund']
+                        }
+                        else {
+                            categoryDiv.textContent = categories[i] + ': ' + insights["total_" + categories[i].toLowerCase()]
+                        }
+                        ms4Div.appendChild(categoryDiv)
+                    }
+                    
+                    // Agregar todos los elementos al contenedor principal
+                    container.appendChild(fs1Div);
+                    container.appendChild(fwLightDiv);
+                    container.appendChild(ms4Div);
+
+                    // Agregar el contenedor al cuerpo del documento (o al elemento que prefieras)
+                    const mainInsights = document.getElementById('main-insights');                    
+                    mainInsights.innerHTML = ''           
+                    mainInsights.appendChild(container);
+
+
+                    var container1 = document.createElement('div');
+                    container1.classList.add('container', 'col-lg-5', 'border', 'rounded-4', 'shadow', 'm-2');
+
+                    // Crear el segundo contenedor
+                    var container2 = document.createElement('div');
+                    container2.classList.add('m-4');
+
+                    // Crear el primer div dentro del segundo contenedor
+                    var fs5Div1 = document.createElement('div');
+                    fs5Div1.classList.add('fs-5', 'text-start');
+                    var sentimentScore = insights['last_week_avg_sentiment_score'];
+                    var roundedSentimentScore = Math.round(sentimentScore * 100) / 100; // Redondear a 2 decimales
+
+                    var sentimentText;
+                    if (sentimentScore <= 0.3) {
+                        sentimentText = 'Bearish';
+                    } else if (sentimentScore > 0.3 && sentimentScore < 0.7) {
+                        sentimentText = 'Neutral';
+                    } else if (sentimentScore >= 0.7) {
+                        sentimentText = 'Bullish';
+                    }
+
+                    var resultText = 'Sentiment: ' + sentimentText + ' (' + roundedSentimentScore + '%)';                    
+                    fs5Div1.textContent = resultText
+
+                    // Crear el segundo div dentro del segundo contenedor
+                    var fs5Div2 = document.createElement('div');
+                    fs5Div2.classList.add('fs-5', 'text-start');
+                    var weekRisk = Math.round(insights['last_week_avg_risk']);
+                    var weekRiskText = 'Average Risk: ' + weekRisk + '%';
+                    fs5Div2.textContent = weekRiskText
+
+                    // Agregar los divs al segundo contenedor
+                    container2.appendChild(fs5Div1);
+                    container2.appendChild(fs5Div2);
+
+                    // Agregar el segundo contenedor al primer contenedor
+                    container1.appendChild(container2);
+
+                    const sentimentRisk = document.getElementById('row-last-week');                    
+                    sentimentRisk.appendChild(container1);
+                    
+                    graph1 =  JSON.parse(data[1])
+                    graph2 =  JSON.parse(data[2])
+                    graph3 =  JSON.parse(data[3])
+                    graph4 =  JSON.parse(data[4])
+                    
+                    const c1 = document.getElementById('chart1');
+                    c1.innerHTML = ''
+                    const c2 = document.getElementById('chart2');
+                    c2.innerHTML = ''
+                    const c3 = document.getElementById('chart3');
+                    c3.innerHTML = ''
+                    const c4 = document.getElementById('chart4');
+                    c4.innerHTML = ''
+                    
+                    Plotly.newPlot('chart1', graph1)
+                    Plotly.newPlot('chart2', graph2)        
+                    Plotly.newPlot('chart3', graph3)
+                    Plotly.newPlot('chart4', graph4)                 
+                },
+                error: function(error) {
+                    console.log('Error al obtener las graficas:', error);
+                }
+            });
+        });
+    </script>
+</main>
+{% endblock %}
