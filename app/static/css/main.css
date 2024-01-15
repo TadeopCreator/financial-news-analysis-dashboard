@@ -1,0 +1,30 @@
+body {
+    margin-bottom: 160px;
+    padding-top: 70px;
+}
+
+// Set black color text to a
+a, a:hover, a:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+hr {    
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 2px solid rgba(0, 0, 0, 0.3);    
+  }
+
+  html {
+    position: relative;
+    min-height: 100%;
+    padding-bottom:160px;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+  }
