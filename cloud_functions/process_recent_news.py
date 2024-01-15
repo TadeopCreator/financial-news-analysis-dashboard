@@ -2,7 +2,7 @@ import os
 import requests
 import ccxt
 import yfinance as yf
-from datetime import datetime
+from datetime import datetime, date, timedelta
 import functions_framework
 from google.cloud import firestore
 
@@ -346,3 +346,354 @@ def process_recent_news(cloud_event):
         insights_doc_recover.update({"temp_last_week_avg_sentiment_mutualfund": 0})
         insights_doc_recover.update({"temp_last_week_avg_sentiment_ecnquote": 0})
         insights_doc_recover.update({"temp_last_week_avg_sentiment_undefined": 0})
+
+    # Set orders, wallets and balances
+    today = datetime.combine(date.today(), datetime.min.time())
+
+    # If it is Monday today, checking if was friday...
+    if day_of_week == 5:
+        initial_day = today - timedelta(days=3)
+        last_day = today - timedelta(days=2)
+    else:
+        initial_day = today - timedelta(days=1)
+        last_day = today
+
+    news = db.collection("news").where("time_published", ">=", initial_day).where("time_published", "<", last_day).stream()
+
+    tickers_dict = {}  # Used for save the current price of processed assets
+    # Wallets for each strategy
+    all_orders = []
+    order_imdex = 0
+    wallet_high_sentiment_day_no_short_low_risk = []
+    wallet_low_sentiment_day_no_short_low_risk = []
+    wallet_high_sentiment_day_with_short_low_risk = []
+    wallet_low_sentiment_day_with_short_low_risk = []
+
+    wallet_high_sentiment_day_no_short_mid_risk = []
+    wallet_low_sentiment_day_no_short_mid_risk = []
+    wallet_high_sentiment_day_with_short_mid_risk = []
+    wallet_low_sentiment_day_with_short_mid_risk = []
+
+    wallet_high_sentiment_day_no_short_all_risk = []
+    wallet_low_sentiment_day_no_short_all_risk = []
+    wallet_high_sentiment_day_with_short_all_risk = []
+    wallet_low_sentiment_day_with_short_all_risk = []
+
+    for new in news:        
+        new_dict = new.to_dict()                
+
+        # For each ticker in the new
+        if 'ticker_sentiment' in new_dict:
+            for ticker in new_dict['ticker_sentiment']:                
+                try:                    
+                    if abs(float(ticker['ticker_sentiment_score'])) >= 0.25:                                                                
+                        pl_absolute = 0
+                        pl_percent = 0
+                        order = {}
+
+                        # If the asset is a CRYPTO
+                        if ticker['type'] == 'CRYPTO':
+                            if ticker['ticker'] in tickers_dict.keys():                                
+                                current_price = tickers_dict[ticker['ticker']]
+                            else:
+                                exchange = ccxt.bitget()                                                        
+                                symbol = ticker['ticker'] + '/USDT'
+                                fetch_ticker = exchange.fetch_ticker(symbol)                                
+                                current_price = float(fetch_ticker['ask'])
+                                tickers_dict[ticker['ticker']] = current_price
+
+                            old_price = float(ticker['price'])
+                            sentiment = float(ticker['ticker_sentiment_score'])
+
+                            if sentiment > 0:
+                                # Long
+                                pl_absolute = current_price - old_price
+                                order['direction'] = 0
+                            else:
+                                # Short
+                                pl_absolute = old_price - current_price
+                                order['direction'] = 1
+                            
+                            pl_percent = (pl_absolute/current_price)*100
+                            order['pl_absolute'] = round(pl_absolute, 4)
+                            order['pl_percent'] = round(pl_percent, 4)                      
+                        else:
+                            if ticker['ticker'] in tickers_dict.keys():                                
+                                current_price = tickers_dict[ticker['ticker']]
+                            else:
+                                ticker_info = yf.Ticker(ticker['ticker'])                        
+                                current_price = float(ticker_info.info['currentPrice'])
+                                tickers_dict[ticker['ticker']] = current_price
+                            
+                            old_price = float(ticker['price'])
+                            sentiment = float(ticker['ticker_sentiment_score'])
+
+                            if sentiment > 0:
+                                # Long
+                                pl_absolute = current_price - old_price
+                                order['direction'] = 0
+                            else:
+                                # Short
+                                pl_absolute = old_price - current_price
+                                order['direction'] = 1
+                            
+                            pl_percent = (pl_absolute/current_price)*100
+                            order['pl_absolute'] = round(pl_absolute, 4)
+                            order['pl_percent'] = round(pl_percent, 4)                            
+
+                        order['ticker'] = ticker['ticker']
+                        order['exchange'] = ticker['exchange']
+                        order['type'] = ticker['type']
+                        order['risk'] = ticker['risk']
+                        order['price'] = current_price
+                        order['date'] = new_dict['time_published']
+                        order['new_ref'] = new.id
+                        order['term'] = 'DAY'
+
+                        all_orders.append(order)
+
+                        # Save order
+                        db.collection("orders").document().set(order)
+
+                        if float(ticker['ticker_sentiment_score']) >= 0.6:
+                            # High sentiment
+                            if order['direction'] == 0:
+                                # If is a long
+                                wallet_high_sentiment_day_no_short_all_risk.append(order_imdex)
+                                wallet_high_sentiment_day_with_short_all_risk.append(order_imdex)
+
+                                if float(order['risk']) <= 6 and float(order['risk']) > 3:
+                                    # Mid risk
+                                    wallet_high_sentiment_day_no_short_mid_risk.append(order_imdex)
+                                    wallet_high_sentiment_day_with_short_mid_risk.append(order_imdex)
+                                elif float(order['risk']) <= 3:
+                                    # Low risk
+                                    wallet_high_sentiment_day_no_short_low_risk.append(order_imdex)
+                                    wallet_high_sentiment_day_with_short_low_risk.append(order_imdex)
+                            else:
+                                # Is a short
+                                wallet_high_sentiment_day_with_short_all_risk.append(order_imdex)
+
+                                if float(order['risk']) <= 6 and float(order['risk']) > 3:
+                                    # Mid risk                                    
+                                    wallet_high_sentiment_day_with_short_mid_risk.append(order_imdex)
+                                elif float(order['risk']) <= 3:
+                                    # Low risk                                    
+                                    wallet_high_sentiment_day_with_short_low_risk.append(order_imdex)
+                        else:
+                            # Low sentiment, from 0.25                       
+                            if order['direction'] == 0:
+                                # If is a long
+                                wallet_low_sentiment_day_no_short_all_risk.append(order_imdex)
+                                wallet_low_sentiment_day_with_short_all_risk.append(order_imdex)
+
+                                if float(order['risk']) <= 6 and float(order['risk']) > 3:
+                                    # Mid risk
+                                    wallet_low_sentiment_day_no_short_mid_risk.append(order_imdex)
+                                    wallet_low_sentiment_day_with_short_mid_risk.append(order_imdex)
+                                elif float(order['risk']) <= 3:
+                                    # Low risk
+                                    wallet_low_sentiment_day_no_short_low_risk.append(order_imdex)
+                                    wallet_low_sentiment_day_with_short_low_risk.append(order_imdex)
+                            else:
+                                # Is a short
+                                wallet_low_sentiment_day_with_short_all_risk.append(order_imdex)
+
+                                if float(order['risk']) <= 6 and float(order['risk']) > 3:
+                                    # Mid risk                                    
+                                    wallet_low_sentiment_day_with_short_mid_risk.append(order_imdex)
+                                elif float(order['risk']) <= 3:
+                                    # Low risk                                    
+                                    wallet_low_sentiment_day_with_short_low_risk.append(order_imdex)
+
+                        order_imdex += 1
+                except Exception as e:
+                    # Print error               
+                    print('yfinance/ccxt error: ' + str(e))
+    
+    # Iterate each list
+    ###############################################################################
+    balance = {}
+    balance['date'] = datetime.utcnow()
+    acc_per = 0
+    for order_i in wallet_high_sentiment_day_no_short_all_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").document().set(balance)
+
+    ###############################################################################
+    acc_per = 0    
+    for order_i in wallet_high_sentiment_day_no_short_mid_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-mid-risk").document().set(balance)
+
+    ###############################################################################
+    acc_per = 0    
+    for order_i in wallet_high_sentiment_day_no_short_low_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-low-risk").document().set(balance)
+    
+    ###############################################################################
+    acc_per = 0    
+    for order_i in wallet_high_sentiment_day_with_short_all_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").document().set(balance)
+
+    ###############################################################################
+    acc_per = 0    
+    for order_i in wallet_high_sentiment_day_with_short_mid_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-mid-risk").document().set(balance)
+
+    ###############################################################################
+    acc_per = 0    
+    for order_i in wallet_high_sentiment_day_with_short_low_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-low-risk").document().set(balance)
+
+    #################################### LOW SENTIMENT ####################################
+
+    ###############################################################################
+    acc_per = 0 
+    for order_i in wallet_low_sentiment_day_no_short_all_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-all-risk").document().set(balance)
+
+    ###############################################################################
+    acc_per = 0    
+    for order_i in wallet_low_sentiment_day_no_short_mid_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-mid-risk").document().set(balance)
+
+    ###############################################################################
+    acc_per = 0    
+    for order_i in wallet_low_sentiment_day_no_short_low_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-low-risk").document().set(balance)
+    
+    ###############################################################################
+    acc_per = 0    
+    for order_i in wallet_low_sentiment_day_with_short_all_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-all-risk").document().set(balance)
+
+    ###############################################################################
+    acc_per = 0    
+    for order_i in wallet_low_sentiment_day_with_short_mid_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-mid-risk").document().set(balance)
+
+    ###############################################################################
+    acc_per = 0    
+    for order_i in wallet_low_sentiment_day_with_short_low_risk:
+        acc_per += round(float(all_orders[order_i]['pl_percent'])/100.0, 8)  # Divided by 100 because is 1% the operation
+        # in relation with all the capital    
+    
+    balance['balance'] = 100.0 + acc_per
+
+    wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
+    for w in wallet:
+        w_dict = w.to_dict
+        balance['balance'] = float(w_dict['balance']) + acc_per
+        
+    db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-low-risk").document().set(balance)
+
+    print("No errors")
