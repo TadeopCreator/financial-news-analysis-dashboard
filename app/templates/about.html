@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<header>
+    <h2>About</h2>
+    <hr/>
+</header>
+<main>
+    <p>
+        Hi there! I'm excited to share my project, the Financial News Sentiment Analyzer. It's a tool I built to help everyone understand how news can affect financial assets, whether positively or negatively.
+    </p>
+
+    <!-- Tecnologías Utilizadas -->
+    <h3 class="mt-4">How I Built It</h3>
+    <p>
+        I created this using some cool technologies. The core is powered by <strong>Flask</strong>, a web framework, and I made everything easy to manage with <strong>Docker</strong> containers. The news analysis is done by a smart AI called <strong>PaLM 2</strong> from Google, thanks to the <strong>Vertex AI Studio Language</strong> service.
+    </p>
+    <p>
+        To keep things running smoothly, I use serverless functions on <strong>Cloud Functions</strong>, scheduled by <strong>Cloud Scheduler</strong> five days a week. All the data is stored in a secure and flexible NoSQL database called <strong>Firestore</strong>.
+    </p>
+    <p>
+        For financial data, I pull information using <strong>yfinance</strong> and <strong>ccxt</strong> library, and then use <strong>Pandas</strong> and <strong>Plotly</strong> to organize and visualize the data. It's a bit like having a robot assistant that reads financial news and tells you what might happen next!
+    </p>
+
+    <!-- Workflow -->
+    <h3 class="mt-4">How It Works</h3>
+    <p>
+        The process is simple – every day, the serverless functions analyze the latest news, and the results are presented on the website. You can click around and get more details on each piece of news.
+    </p>
+
+    <!-- Data Storage -->
+    <h3 class="mt-4">Behind the Scenes</h3>
+    <p>
+        It's using Cloud Run for deployment, Cloud Build for development, and Cloud Scheduler for keeping things on schedule. And don't worry, I keep sensitive information safe using Secret Manager.
+    </p>    
+</main>
+{% endblock %}
