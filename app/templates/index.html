@@ -4,6 +4,7 @@
 <header>
     <h2 class="mb-3">Recent news</h2>
     <hr/>
+    <p class="mb-4">Explore the latest analyzed news. Click on the 'Explore Details' button to see more information and insights behind each headline</p>
 </header>
 <main>
     <div class="shadow mb-4 bg-body-tertiary rounded">
@@ -62,10 +63,11 @@
                         const divContainer3 = document.createElement('div');
                         divContainer3.classList.add('container', 'col-6', 'text-start', 'fs-6');                        
                         externalLink = document.createElement('a');
-                        externalLink.classList.add('text-reset');
+                        externalLink.classList.add('text-reset', 'link-dark', 'link-offset-2', 'link-underline-opacity-25', 'link-underline-opacity-100-hove');
                         externalLink.setAttribute('href', noticia.url);
                         externalLink.setAttribute('target', '_blank');
-                        externalLink.textContent = noticia.title;
+                        externalLink.textContent = noticia.title;                        
+
                         divContainer3.appendChild(externalLink);
 
                         const divContainer4 = document.createElement('div');
@@ -108,7 +110,7 @@
                         analysisLink.setAttribute('type', 'button');
                         analysisLink.classList.add('btn', 'btn-outline-dark');
                         analysisLink.setAttribute('href', '/new/' + (index + 1)); // Adjust href as per your Flask route
-                        analysisLink.textContent = 'Analyze';
+                        analysisLink.textContent = 'Explore Details';
                         accordionBody.appendChild(analysisLink);
 
                         // Adjuntar cuerpo al colapso del acordeón
@@ -167,7 +169,7 @@
                     const spanNext = document.createElement('span')
                     spanNext.setAttribute('aria-hidden', 'true')
                     spanNext.textContent = '»'
-                    if (newsNumber < 20) {
+                    if (newsNumber < 20 || page >= 5) {
                         pageItemNext.classList.add('disabled');
                     }
                     pageItemNext.appendChild(spanNext)
@@ -181,7 +183,7 @@
                     paginationContainer.appendChild(pag)
                 },
                 error: function(error) {
-                    console.log('Error al obtener las noticias:', error);
+                    console.log('Error when get news: ', error);
                 }
             });
         });
