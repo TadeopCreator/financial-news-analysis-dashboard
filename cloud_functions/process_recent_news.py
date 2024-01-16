@@ -230,7 +230,7 @@ def process_recent_news(cloud_event):
     insights_doc.update({"temp_last_week_avg_sentiment_mutualfund": firestore.Increment(diff_sentiment_mutualfund)})
     insights_doc.update({"temp_last_week_avg_sentiment_ecnquote": firestore.Increment(diff_sentiment_ecnquote)})
     insights_doc.update({"temp_last_week_avg_sentiment_undefined": firestore.Increment(diff_sentiment_undefined)})
-        
+    
     insights_dict = insights_doc.get().to_dict()
     day_of_week = insights_dict['day_of_week']
     
@@ -526,7 +526,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").document().set(balance)
@@ -541,7 +541,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-mid-risk").document().set(balance)
@@ -556,7 +556,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-low-risk").document().set(balance)
@@ -571,7 +571,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").document().set(balance)
@@ -586,7 +586,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-mid-risk").document().set(balance)
@@ -601,7 +601,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-low-risk").document().set(balance)
@@ -618,7 +618,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-all-risk").document().set(balance)
@@ -633,7 +633,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-mid-risk").document().set(balance)
@@ -648,7 +648,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-low-risk").document().set(balance)
@@ -663,7 +663,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-all-risk").document().set(balance)
@@ -678,7 +678,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-mid-risk").document().set(balance)
@@ -693,7 +693,7 @@ def process_recent_news(cloud_event):
 
     wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
     for w in wallet:
-        w_dict = w.to_dict
+        w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
     db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-low-risk").document().set(balance)
