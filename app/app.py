@@ -258,6 +258,14 @@ def pie_assets_distribution_graph(distribution_values):
     return graph
 
 def icicle_main_symbols_graph():
+    """Generates an icicle graph showing the top gainers per asset type from the past week.
+    
+    Fetches orders from the past week, accumulates percent gain by asset type, 
+    then renders an icicle graph with the top symbols and asset types.
+    
+    Returns:
+        A JSON string containing the icicle graph.
+    """
     global top_winners_per_asset_icicle_json
 
     if top_winners_per_asset_icicle_json:
@@ -324,6 +332,10 @@ def icicle_main_symbols_graph():
 
 @app.route('/get_graphs', methods=['GET'])
 def get_graphs():
+    # Retrieves insights data from Firestore and generates graphs
+    # Parses document into lists of values for graphing
+    # Calls functions to generate each graph with data
+    # Returns list containing parsed doc and generated graphs
     db = firestore.Client(project='financial-news-analysis-410223')
     docs = db.collection("insights").document("insights-data")
 
