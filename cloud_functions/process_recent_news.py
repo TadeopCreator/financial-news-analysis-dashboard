@@ -351,7 +351,7 @@ def process_recent_news(cloud_event):
     today = datetime.combine(date.today(), datetime.min.time())
 
     # If it is Monday today, checking if was friday...
-    if day_of_week == 5:
+    if day_of_week == 5:        
         initial_day = today - timedelta(days=3)
         last_day = today - timedelta(days=2)
     else:
@@ -449,11 +449,13 @@ def process_recent_news(cloud_event):
                         order['date'] = new_dict['time_published']
                         order['new_ref'] = new.id
                         order['term'] = 'DAY'
+                        order['sentiment_score'] = float(ticker['ticker_sentiment_score'])
 
                         all_orders.append(order)
 
                         # Save order
                         db.collection("orders").document().set(order)
+                        print("Save order")
 
                         if float(ticker['ticker_sentiment_score']) >= 0.6:
                             # High sentiment
