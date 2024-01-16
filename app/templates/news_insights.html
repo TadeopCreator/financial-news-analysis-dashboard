@@ -21,10 +21,13 @@
     </div>
 
     <br>
-    <h3 class="mb-4">Last week</h3>
+    <h3 class="mb-4">Last week insights</h3>
 
     <div class="row justify-content-center" id="row-last-week">
         <div class="container col-lg-5 border rounded-4 shadow m-2">
+            <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                Top 10 winner assets
+            </div>
             <div id="chart1">
                 <br><br><br><br><br>
                 <div class="d-flex justify-content-center">
@@ -36,6 +39,9 @@
             </div>
         </div>
         <div class="container col-lg-5 border rounded-4 shadow m-2">
+            <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                Top winners per Asset Type
+            </div>
             <div id="chart4">
                 <br><br><br><br><br>
                 <div class="d-flex justify-content-center">
@@ -47,6 +53,9 @@
             </div>
         </div>
         <div class="container col-lg-5 border rounded-4 shadow m-2">
+            <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                Average Sentiment Score per Asset
+            </div>
             <div id="chart2">
                 <br><br><br><br><br>
                 <div class="d-flex justify-content-center">
@@ -58,6 +67,9 @@
             </div>
         </div>
         <div class="container col-lg-5 border rounded-4 shadow m-2">
+            <div class="text-start mt-4 ms-4 fs-5 fw-semibold">             
+                Asset Distribution by Type
+            </div>
             <div id="chart3">
                 <br><br><br><br><br>
                 <div class="d-flex justify-content-center">
@@ -167,7 +179,7 @@
                     var fs5Div1 = document.createElement('div');
                     fs5Div1.classList.add('fs-5', 'text-start');
                     var sentimentScore = insights['last_week_avg_sentiment_score'];
-                    var roundedSentimentScore = Math.round(sentimentScore * 100) / 100; // Redondear a 2 decimales
+                    var roundedSentimentScore = (Math.round(sentimentScore * 100) / 100)*100; // Redondear a 2 decimales
 
                     var sentimentText;
                     if (sentimentScore <= 0.3) {
@@ -185,7 +197,7 @@
                     var fs5Div2 = document.createElement('div');
                     fs5Div2.classList.add('fs-5', 'text-start');
                     var weekRisk = Math.round(insights['last_week_avg_risk']);
-                    var weekRiskText = 'Average Risk: ' + weekRisk + '%';
+                    var weekRiskText = 'Average Risk: ' + weekRisk;
                     fs5Div2.textContent = weekRiskText
 
                     // Agregar los divs al segundo contenedor
