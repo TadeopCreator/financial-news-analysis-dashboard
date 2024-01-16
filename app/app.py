@@ -4,6 +4,7 @@ import plotly_express as px
 import plotly.graph_objects as go
 from flask import Flask, render_template, request
 from google.cloud import firestore
+from datetime import datetime, timedelta
 
 news_list = []  # news_list is a global list variable that will hold the news articles 
 # retrieved from the database for the current page.
@@ -14,6 +15,12 @@ selected_new_info = {}  # selected_new_info holds information about the currentl
 
 selected_page = 1  # Sets the global selected_page variable to 1. This will be the default page
 # shown on the index page if no specific page is requested.
+
+top_10_assets_pie_json = {}  # top_10_assets_pie_json holds the pie chart data for the top 10 assets.
+top_winners_per_asset_icicle_json = {}  # top_winners_per_asset_icicle_json holds the icicle chart data 
+# for the top winners per
+average_sentiment_score_per_asset_bars_json = {}  # average_sentiment_score_per_asset_bars_json holds the bar chart data
+asset_distribution_per_type_json = {}  # asset_distribution_per_type_json holds the bar chart data for the asset distribution per type.
 
 
 app = Flask(__name__)
@@ -51,6 +58,7 @@ def index():
 
     return render_template('index.html', current_page=selected_page)
 
+
 @app.route('/get_orders', methods=['GET'])
 def get_orders():
     # Retrieves the 10 most recent orders from Firestore.    
@@ -61,7 +69,7 @@ def get_orders():
     orders = db.collection("orders").order_by('date', direction=firestore.Query.DESCENDING).limit(10).stream()
 
     orders_list = []
-
+    
     for order in orders:
         orders_list.append(order.to_dict())
 
@@ -124,7 +132,6 @@ def cb_graph_2():
     
     doc_dict = insights.to_dict()
 
-
     sentiment_values = [doc_dict['last_week_avg_sentiment_equity'], 
                         doc_dict['last_week_avg_sentiment_index'], 
                         doc_dict['last_week_avg_sentiment_forex'], 
@@ -142,10 +149,9 @@ def cb_graph_3():
     docs = db.collection("insights").document("insights-data")
 
     insights = docs.get()
-    
     doc_dict = insights.to_dict()
 
-    proportion_values = [doc_dict['total_equity'],
+    distribution_values = [doc_dict['total_equity'],
                          doc_dict['total_index'],
                          doc_dict['total_forex'],
                          doc_dict['total_etf'],
@@ -154,35 +160,51 @@ def cb_graph_3():
                          doc_dict['total_ecnquote'],
                          doc_dict['total_undefined']]
     
-    return pie_assets_proportion_graph(proportion_values)
+    return pie_assets_distribution_graph(distribution_values)
 
 @app.route('/callback_graph_4', methods=['POST', 'GET'])
 def cb_graph_4():
     return icicle_main_symbols_graph()
 
-def pie_main_symbols_graph():
-    """Generates a pie chart showing the proportion of mentions for the top 5 symbols.
+def pie_main_symbols_graph(): 
+    global top_10_assets_pie_json
+
+    if top_10_assets_pie_json:
+        return top_10_assets_pie_json
+       
+    orders_list = []
+    labels = []
+    values = []
+
+    db = firestore.Client(project='financial-news-analysis-410223')
+    # Get top 10 orders with major pl_percent
+    orders = db.collection("orders").order_by('pl_percent', direction=firestore.Query.DESCENDING).limit(10).stream()    
     
-    Creates a Pie chart using Plotly, with the labels and values specified. 
-    Colors are set to a predefined palette.
-    
-    The figure is then converted to JSON string to return.
-    """
-    labels = ['TSLA','AAPL','MSFT','PENN', 'Other']
-    values = [4500, 2500, 1053, 500, 300]    
+    for order in orders:
+        orders_list.append(order.to_dict())
+
+    for order in orders_list:
+        labels.append(order['ticker'])
+        values.append(order['pl_percent'])
     
     colors = ['#363432', '#196774', '#90A19D', '#F0941F', '#EF6024']
 
     # Create a Pie chart with specified colors
     fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.3, marker=dict(colors=colors))])
-    fig.update_traces(textposition='inside', textfont_size=18)    
-    fig.update_layout(title_text='Pie Chart', font_family="Roboto")   
+    fig.update_traces(textposition='inside', textfont_size=18)        
 
     graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    top_10_assets_pie_json = graph
     
     return graph
 
-def bar_graph(sentiment_values):    
+def bar_graph(sentiment_values):
+    global average_sentiment_score_per_asset_bars_json
+
+    if average_sentiment_score_per_asset_bars_json:
+        return average_sentiment_score_per_asset_bars_json
+    
     assets=['Equity', 'Index', 'Forex', 'ETF', 'Crypto', 'Mutual Fund', 'Ecn Quote', 'Undefined']
 
     # Colores
@@ -199,47 +221,104 @@ def bar_graph(sentiment_values):
     ))
 
     # Diseño de la gráfica
-    fig.update_layout(
-        title='Gráfico de Barras',
+    fig.update_layout(        
         xaxis=dict(title='Assets'),
-        yaxis=dict(title='Valor')
+        yaxis=dict(title='Avg. Sentiment Score [%]')
     )
 
     # Change the bar mode
     fig.update_layout(barmode='group')
     fig.update_traces(textposition='inside', textfont_size=18)    
-    fig.update_layout(title_text='Sentiment per asset', font_family="Roboto")       
 
     graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    average_sentiment_score_per_asset_bars_json = graph
 
     return graph
 
-def pie_assets_proportion_graph(proportion_values):    
-    assets = ['Equity', 'Index', 'Forex', 'ETF', 'Crypto', 'Mutual Fund', 'Ecn Quote', 'Undefined']    
+def pie_assets_distribution_graph(distribution_values):
+    global asset_distribution_per_type_json
 
+    if asset_distribution_per_type_json:
+        return asset_distribution_per_type_json
+
+    assets = ['Equity', 'Index', 'Forex', 'ETF', 'Crypto', 'Mutual Fund', 'Ecn Quote', 'Undefined']
     colors = ['rgba(50, 171, 96, 0.6)', 'rgb(128, 0, 128)']
 
     # Crear figura de pastel
-    fig = go.Figure(data=[go.Pie(labels=assets, values=proportion_values, marker=dict(colors=colors))])
+    fig = go.Figure(data=[go.Pie(labels=assets, values=distribution_values, marker=dict(colors=colors))])
 
     # Diseño de la gráfica    
     fig.update_traces(textposition='inside', textfont_size=18)    
-    fig.update_layout(title_text='Assets', font_family="Roboto")   
 
     graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    asset_distribution_per_type_json = graph
     
     return graph
 
 def icicle_main_symbols_graph():
+    global top_winners_per_asset_icicle_json
+
+    if top_winners_per_asset_icicle_json:
+        return top_winners_per_asset_icicle_json
+    
+    last_week_orders = []
+    names = ["Assets"]
+    parents = [""]
+    values = [100]
+
+    today = datetime.now()
+    last_week_start = today - timedelta(days=(today.weekday() + 7))  # Lunes pasado
+    last_week_end = last_week_start + timedelta(days=4)  # Viernes pasado
+
+    db = firestore.Client(project='financial-news-analysis-410223')
+
+    # Get top 10 orders with major pl_percent, from last week
+    orders_unsorted = db.collection("orders").where("date", ">=", last_week_start).where("date", "<=", last_week_end).stream()
+    
+    for order in orders_unsorted:
+        last_week_orders.append(order.to_dict())
+
+    # Sort last_week_orders list in descending order by the pl_percent field in each order
+    last_week_orders.sort(key=lambda x: x['pl_percent'], reverse=True)
+
+    # Accumulate pl_percent per asset type in a new list
+    acc_values_per_type = [0, 0, 0, 0, 0, 0, 0, 0]  # First save on EQUITY, then INDEX and so on
+
+    # Dictionary of assets with index from 0 to 7 as value
+    assets_dict = {'EQUITY': 0, 'INDEX': 1, 'FOREX': 2, 'ETF': 3, 'CRYPTO': 4, 'MUTUALFUND': 5, 'ECNQUOTE': 6, 'UNDEFINED': 7}
+
+    for order in last_week_orders:
+        # If ticker exist on the parents list accumulate pl_percent at that position
+        if order['ticker'] in names:
+            t = order['ticker']         
+            values[names.index(f'{t}')] += order['pl_percent']
+        else:
+            names.append(order['ticker'])
+            values.append(order['pl_percent'])
+            parents.append(order['type'])
+
+        acc_values_per_type[assets_dict[order['type']]] += order['pl_percent']
+
+    assets = ['EQUITY', 'INDEX', 'FOREX', 'ETF', 'CRYPTO', 'MUTUALFUND', 'ECNQUOTE', 'UNDEFINED']
+    for i, asset in enumerate(assets):
+        names.append(asset)
+        parents.append("Assets")
+        values.append(acc_values_per_type[i])
+
     fig = px.treemap(
-        names=["Assets", "Equity", "AAPL", "TSLA", "PENN", "Index", "Forex", "ETF", "Crypto", "Mutual Fund", "Ecn Quote", "Undefined"],
-        parents=["", "Assets", "Equity", "Equity", "Equity", "Assets", "Assets", "Assets", "Assets", "Assets", "Assets", "Assets"]
+        names=names,
+        parents=parents,
+        values=values
     )
 
     fig.update_layout(margin = dict(t=50, l=25, r=25, b=25))
     fig.update_layout(font_family="Roboto")
 
     graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    top_winners_per_asset_icicle_json = graph
     
     return graph
 
@@ -252,16 +331,16 @@ def get_graphs():
     
     doc_dict = insights.to_dict()
 
-    sentiment_values = [doc_dict['last_week_avg_sentiment_equity'], 
-                        doc_dict['last_week_avg_sentiment_index'], 
-                        doc_dict['last_week_avg_sentiment_forex'], 
-                        doc_dict['last_week_avg_sentiment_etf'], 
-                        doc_dict['last_week_avg_sentiment_crypto'], 
-                        doc_dict['last_week_avg_sentiment_mutualfund'],
-                        doc_dict['last_week_avg_sentiment_ecnquote'],
-                        doc_dict['last_week_avg_sentiment_undefined']]
+    sentiment_values = [doc_dict['last_week_avg_sentiment_equity']*100, 
+                        doc_dict['last_week_avg_sentiment_index']*100, 
+                        doc_dict['last_week_avg_sentiment_forex']*100, 
+                        doc_dict['last_week_avg_sentiment_etf']*100, 
+                        doc_dict['last_week_avg_sentiment_crypto']*100, 
+                        doc_dict['last_week_avg_sentiment_mutualfund']*100,
+                        doc_dict['last_week_avg_sentiment_ecnquote']*100,
+                        doc_dict['last_week_avg_sentiment_undefined']*100]
         
-    proportion_values = [doc_dict['total_equity'],
+    distribution_values = [doc_dict['total_equity'],
                          doc_dict['total_index'],
                          doc_dict['total_forex'],
                          doc_dict['total_etf'],
@@ -272,7 +351,7 @@ def get_graphs():
 
     graph1 = pie_main_symbols_graph()
     graph2 = bar_graph(sentiment_values)
-    graph3 = pie_assets_proportion_graph(proportion_values)
+    graph3 = pie_assets_distribution_graph(distribution_values)
     graph4 = icicle_main_symbols_graph()
 
     list_data = [doc_dict, graph1, graph2, graph3, graph4]
