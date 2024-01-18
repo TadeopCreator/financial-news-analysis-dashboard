@@ -77,7 +77,7 @@ def get_orders():
 
 
 @app.route('/get_news', methods=['GET'])
-def obtener_noticias():
+def get_news():
     # Retrieves news articles from Firestore based on the selected page 
     # and returns them as a list of news (dictionaries).
     # Orders articles by descending publish time. 
@@ -112,12 +112,6 @@ def new(index):
         selected_new_info = news_list[selected_new_index]
     
     return render_template('new.html', new=selected_new_info)
-
-# @app.route('/save_new', methods=['POST'])
-# def save_new():
-#     data = request.form['data']
-
-#     return render_template('new.html', new=selected_new_info, index=selected_new_index, message=data)
 
 @app.route('/callback_graph_1', methods=['POST', 'GET'])
 def cb_graph_1():
@@ -375,7 +369,6 @@ def get_graphs():
 def news_insights():
     return render_template('news_insights.html')
 
-
 @app.route('/about')
 def about():
     return render_template('about.html')
@@ -394,7 +387,6 @@ def portfolio():
 @app.errorhandler(404)
 def page_not_found(e):
     # Handles 404 page not found errors by rendering the 404.html template and returning a 404 status code
-    
     return render_template('404.html'), 404
 
 if __name__ == '__main__':
