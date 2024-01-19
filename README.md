@@ -2,6 +2,10 @@
 
 This project is a Flask application that provides a sentiment analysis dashboard for stocks using Google Cloud Firestore. The application allows users to analyze sentiment data from news related to finance and visualize the information in a dashboard format.
 
+<div align="center">
+  <img src="app/static/stocks-dashboard-flow.jpg" alt="Financial News Analysis Architecture">
+</div>
+
 ## Installation
 
 To run this project locally, make sure you have Docker installed on your machine.
