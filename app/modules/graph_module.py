@@ -122,16 +122,23 @@ def icicle_main_symbols_graph():
     values = [100]
 
     today = datetime.now()
-    last_week_start = today - timedelta(days=(today.weekday() + 7))  # Lunes pasado
-    last_week_end = last_week_start + timedelta(days=4)  # Viernes pasado
+    last_week_start = today - timedelta(days=(today.weekday() + 7))  # Last Monday
+    last_week_end = last_week_start + timedelta(days=4)  # Last Friday
 
     db = firestore.Client(project='financial-news-analysis-410223')
 
     # Get top 10 orders with major pl_percent, from last week
-    orders_unsorted = db.collection("orders").where("date", ">=", last_week_start).where("date", "<=", last_week_end).stream()
-    
+    orders_unsorted = db.collection("orders").where("date", ">=", last_week_start).where("date", "<=", last_week_end).stream()    
+
     for order in orders_unsorted:
         last_week_orders.append(order.to_dict())
+
+    if not last_week_orders:
+        orders_unsorted = db.collection("orders").order_by('date', direction=firestore.Query.DESCENDING).limit(20).stream()
+
+        for order in orders_unsorted:
+            last_week_orders.append(order.to_dict())
+
 
     # Sort last_week_orders list in descending order by the pl_percent field in each order
     last_week_orders.sort(key=lambda x: x['pl_percent'], reverse=True)
@@ -155,9 +162,13 @@ def icicle_main_symbols_graph():
         acc_values_per_type[assets_dict[order['type']]] += order['pl_percent']
 
     assets = ['EQUITY', 'INDEX', 'FOREX', 'ETF', 'CRYPTO', 'MUTUALFUND', 'ECNQUOTE', 'UNDEFINED']
-    for i, asset in enumerate(assets):
-        names.append(asset)
-        parents.append("Assets")
+    parent_assets = ['Assets'] * len(assets)
+
+    names[1:1] = assets
+    parents[1:1] = parent_assets
+    values[0] = sum(values[1:9])
+
+    for i in range(len(assets)):
         values.append(acc_values_per_type[i])
 
     fig = px.treemap(
