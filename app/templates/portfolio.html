@@ -53,8 +53,6 @@
                 url: '/get_orders', // Ruta en Flask para obtener las noticias
                 method: 'GET',
                 success: function(orders) {
-                    console.log(orders)
-
                     const accordionContainer = document.getElementById('accordionExample');
 
                     accordionContainer.innerHTML = ''
@@ -106,7 +104,7 @@
                         button.appendChild(divContainerTicker)
                         button.appendChild(divContainerDirection)                        
                         button.appendChild(divContainerPl)
-                        button.appendChild(divContainerTerm)                        
+                        button.appendChild(divContainerTerm)                 
                         
                         // Adjuntar botón al encabezado del acordeón
                         accordionHeader.appendChild(button);
@@ -138,11 +136,40 @@
                         textRisk.classList.add('row')
                         textRisk.textContent = 'Risk: ' + order.risk
 
+                        const newLink = document.createElement('a');
+                        newLink.setAttribute('type', 'button');
+                        newLink.classList.add('btn', 'btn-outline-dark', 'row',  'mt-2');
+                        newLink.textContent = 'View New';
+
+                        newLink.addEventListener('click', function(event) {
+                            event.preventDefault();  // Evita la recarga de la página
+
+                            // Datos a enviar al backend
+                            const data = order.new_ref
+
+                            // Enviar datos al backend usando AJAX
+                            fetch('/order_new', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(data)
+                            })
+                            .then(data => {
+                                window.location.href = '/new/1';
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                        });
+
                         detailsContainer.appendChild(textTicker);
                         detailsContainer.appendChild(textExchange);
                         detailsContainer.appendChild(textDirection);
                         detailsContainer.appendChild(textRisk);
+                        detailsContainer.appendChild(newLink);
                         accordionBody.appendChild(detailsContainer);
+
 
                         // Adjuntar cuerpo al colapso del acordeón
                         accordionCollapse.appendChild(accordionBody);
@@ -160,6 +187,5 @@
                 }
             });
         });
-
     </script>
 {% endblock %}
