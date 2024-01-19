@@ -574,7 +574,7 @@ def process_recent_news(cloud_event):
         w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
-    db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").document().set(balance)
+    db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-all-risk").document().set(balance)
 
     ###############################################################################
     acc_per = 0    
@@ -589,7 +589,7 @@ def process_recent_news(cloud_event):
         w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
-    db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-mid-risk").document().set(balance)
+    db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-mid-risk").document().set(balance)
 
     ###############################################################################
     acc_per = 0    
@@ -604,7 +604,7 @@ def process_recent_news(cloud_event):
         w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
-    db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-low-risk").document().set(balance)
+    db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-low-risk").document().set(balance)
 
     #################################### LOW SENTIMENT ####################################
 
@@ -666,7 +666,7 @@ def process_recent_news(cloud_event):
         w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
-    db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-all-risk").document().set(balance)
+    db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-all-risk").document().set(balance)
 
     ###############################################################################
     acc_per = 0    
@@ -681,7 +681,7 @@ def process_recent_news(cloud_event):
         w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
-    db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-mid-risk").document().set(balance)
+    db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-mid-risk").document().set(balance)
 
     ###############################################################################
     acc_per = 0    
@@ -696,6 +696,6 @@ def process_recent_news(cloud_event):
         w_dict = w.to_dict()
         balance['balance'] = float(w_dict['balance']) + acc_per
         
-    db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-low-risk").document().set(balance)
+    db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-low-risk").document().set(balance)
 
     print("No errors")
