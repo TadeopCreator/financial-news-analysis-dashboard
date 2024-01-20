@@ -13,7 +13,6 @@
             <br><br><br><br><br>
                 <div class="d-flex justify-content-center">
                     <div class="spinner-border m-5" role="status">
-                      <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             <br><br><br><br><br>
@@ -32,7 +31,6 @@
                 <br><br><br><br><br>
                 <div class="d-flex justify-content-center">
                     <div class="spinner-border m-5" role="status">
-                      <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
                 <br><br><br><br><br>        
@@ -46,7 +44,6 @@
                 <br><br><br><br><br>
                 <div class="d-flex justify-content-center">
                     <div class="spinner-border m-5" role="status">
-                      <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
                 <br><br><br><br><br>   
@@ -60,7 +57,6 @@
                 <br><br><br><br><br>
                 <div class="d-flex justify-content-center">
                     <div class="spinner-border m-5" role="status">
-                      <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
                 <br><br><br><br><br>
@@ -74,7 +70,6 @@
                 <br><br><br><br><br>
                 <div class="d-flex justify-content-center">
                     <div class="spinner-border m-5" role="status">
-                      <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
                 <br><br><br><br><br>
@@ -177,7 +172,7 @@
 
                     // Crear el primer div dentro del segundo contenedor
                     var fs5Div1 = document.createElement('div');
-                    fs5Div1.classList.add('fs-5', 'text-start');
+                    fs5Div1.classList.add('fs-5', 'text-start', 'ms-4');
                     var sentimentScore = insights['last_week_avg_sentiment_score'];
                     var roundedSentimentScore = (Math.round(sentimentScore * 100) / 100)*100; // Redondear a 2 decimales
 
@@ -195,12 +190,16 @@
 
                     // Crear el segundo div dentro del segundo contenedor
                     var fs5Div2 = document.createElement('div');
-                    fs5Div2.classList.add('fs-5', 'text-start');
+                    fs5Div2.classList.add('fs-5', 'text-start', 'ms-4');
                     var weekRisk = Math.round(insights['last_week_avg_risk']);
                     var weekRiskText = 'Average Risk: ' + weekRisk;
                     fs5Div2.textContent = weekRiskText
+                    var titleLastWeekGeneral = document.createElement('div');
+                    titleLastWeekGeneral.classList.add("text-start", "mt-4", "ms-4", "mb-2", "fs-5", "fw-semibold")
+                    titleLastWeekGeneral.textContent = 'Last Week General Info'
 
                     // Agregar los divs al segundo contenedor
+                    container2.appendChild(titleLastWeekGeneral);
                     container2.appendChild(fs5Div1);
                     container2.appendChild(fs5Div2);
 
