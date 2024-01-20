@@ -8,30 +8,190 @@
     <h2>Portfolio</h2>
     <hr/>
 </header>
-<mai>
+<main>
+    <p>Explore 12 distinctive portfolios designed based on sentiment, risk tolerance, and short-selling preferences. Each portfolio tells a nuanced story of how news-driven insights guide strategic investment decisions.</p>
 
-    <div class="btn-group mb-4">
-        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
-          Wallets
-        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">High Sentiment, all risks, short allowed</a></li>
-          <li><a class="dropdown-item" href="#">High Sentiment, medium risk, short allowed</a></li>
-          <li><a class="dropdown-item" href="#">High Sentiment, low risk, short allowed</a></li>
-          <li><a class="dropdown-item" href="#">High Sentiment, all risks, short not allowed</a></li>
-          <li><a class="dropdown-item" href="#">High Sentiment, medium risk, short not allowed</a></li>
-          <li><a class="dropdown-item" href="#">High Sentiment, low risk, short not allowed</a></li>
-          
-          <li><a class="dropdown-item" href="#">Low Sentiment, all risks, short allowed</a></li>
-          <li><a class="dropdown-item" href="#">Low Sentiment, medium risk, short allowed</a></li>
-          <li><a class="dropdown-item" href="#">Low Sentiment, low risk, short allowed</a></li>
-          <li><a class="dropdown-item" href="#">Low Sentiment, all risks, short not allowed</a></li>
-          <li><a class="dropdown-item" href="#">Low Sentiment, medium risk, short not allowed</a></li>
-          <li><a class="dropdown-item" href="#">Low Sentiment, low risk, short not allowed</a></li>
-        </ul>
+    <div class="btn-group" role="group">
+        <input type="radio" class="btn-check" data-bs-toggle="collapse" data-bs-target=".multi-collapse" href="#multiCollapseHighSentiment" role="button" aria-expanded="true" aria-controls="multiCollapseHighSentiment multiCollapseLowSentiment" name="btnradio" id="btnradio1" autocomplete="off" checked>
+        <label class="btn btn-outline-dark" for="btnradio1">High Sentiment</label>
+      
+        <input type="radio" class="btn-check" data-bs-toggle="collapse" data-bs-target=".multi-collapse" href="#multiCollapseLowSentiment" role="button" aria-expanded="false" aria-controls="multiCollapseHighSentiment multiCollapseLowSentiment" name="btnradio" id="btnradio2" autocomplete="off">
+        <label class="btn btn-outline-dark" for="btnradio2">Low Sentiment</label>
+    </div>          
+
+    <div id="multiCollapseHighSentiment" class="multi-collapse collapse show">
+
+        <h3 class="mt-4 mb-4">High Sentiment</h3>
+        <div class="row justify-content-center">
+    
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    All risks, short allowed
+                </div>
+                <div id="balance-1" class="">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    Medium risk, short allowed
+                </div>
+                <div id="balance-2">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    Low risk, short allowed
+                </div>
+                <div id="balance-3">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    All risks, short not allowed
+                </div>
+                <div id="balance-4">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    Medium risk, short not allowed
+                </div>
+                <div id="balance-5">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    Low risk, short not allowed
+                </div>
+                <div id="balance-6">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="multiCollapseLowSentiment" class="multi-collapse collapse">
+        <div class="row justify-content-center">
+            <h3 class="mt-4 mb-4">Low Sentiment</h3>
+    
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    All risks, short allowed
+                </div>
+                <div id="balance-7" class="">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    Medium risk, short allowed
+                </div>
+                <div id="balance-8">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    Low risk, short allowed
+                </div>
+                <div id="balance-9">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    All risks, short not allowed
+                </div>
+                <div id="balance-10">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    Medium risk, short not allowed
+                </div>
+                <div id="balance-11">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+                <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
+                    Low risk, short not allowed
+                </div>
+                <div id="balance-12">
+                    <br><br><br><br><br><br>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border m-5" role="status">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <h3 class="mb-4">All orders</h3>
+    <br>
+    <h3 class="mt-4 mb-4">All orders</h3>
     <p class="mb-4">Last 10 completed orders</p>
 
     <div class="shadow mb-4 bg-body-tertiary rounded">
@@ -44,6 +204,41 @@
         </div>
     </div>    
 </main>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    window.addEventListener('resize', function(event) {        
+        $.getJSON({
+            url: "/callback_graph_balance_1", success: function (result) {                    
+                Plotly.newPlot('balance-1', result, {staticPlot: true});
+            }
+        });
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {            
+        $.ajax({                
+            url: '/get_balances', // Ruta en Flask para obtener las noticias
+            method: 'GET',
+
+            success: function(data) {                                
+                balance1 =  JSON.parse(data[0])
+                
+                const c1 = document.getElementById('balance-1');
+                c1.innerHTML = ''               
+                
+                Plotly.newPlot('balance-1', balance1)           
+            },
+            error: function(error) {
+                console.log('Error al obtener las graficas:', error);
+            }
+        });
+    });
+</script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>

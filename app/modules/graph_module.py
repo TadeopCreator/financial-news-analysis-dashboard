@@ -3,6 +3,7 @@ import plotly
 import plotly_express as px
 import plotly.graph_objects as go
 from google.cloud import firestore
+import pandas as pd
 from datetime import datetime, timedelta
 
 top_10_assets_pie_json = {}  # top_10_assets_pie_json holds the pie chart data for the top 10 assets.
@@ -10,6 +11,14 @@ top_winners_per_asset_icicle_json = {}  # top_winners_per_asset_icicle_json hold
 # for the top winners per
 average_sentiment_score_per_asset_bars_json = {}  # average_sentiment_score_per_asset_bars_json holds the bar chart data
 asset_distribution_per_type_json = {}  # asset_distribution_per_type_json holds the bar chart data for the asset distribution per type.
+
+balance_1_graph_json = {}  # balance_1_graph_json holds the bar chart data for the balance 1 graph.
+balance_2_graph_json = {}  # balance_2_graph_json holds the bar chart data for the balance 2 graph.
+balance_3_graph_json = {}  # balance_3_graph_json holds the bar chart data for the balance 3 graph.
+balance_4_graph_json = {}  # balance_4_graph_json holds the bar chart data for the balance 4 graph.
+balance_5_graph_json = {}  # balance_5_graph_json holds the bar chart data for the balance 5 graph.
+balance_6_graph_json = {}  # balance_6_graph_json holds the bar chart data for the balance 6 graph.
+
 
 def pie_main_symbols_graph(): 
     global top_10_assets_pie_json
@@ -32,7 +41,7 @@ def pie_main_symbols_graph():
         labels.append(order['ticker'])
         values.append(order['pl_percent'])
     
-    colors = ['#363432', '#196774', '#90A19D', '#F0941F', '#EF6024']
+    colors = ['#994D1C', '#E48F45', '#ED7D31', '#FFE6B3', '#FFD699', '#FFC27F', '#F5CCA0', '#FFB966', '#FFA54D', '#FF9933', '#FF8800']
 
     # Create a Pie chart with specified colors
     fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.3, marker=dict(colors=colors))])
@@ -73,6 +82,7 @@ def bar_graph(sentiment_values):
 
     # Change the bar mode
     fig.update_layout(barmode='group')
+    fig.update_xaxes(title='')
     fig.update_traces(textposition='inside', textfont_size=18)    
 
     graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
@@ -88,7 +98,7 @@ def pie_assets_distribution_graph(distribution_values):
         return asset_distribution_per_type_json
 
     assets = ['Equity', 'Index', 'Forex', 'ETF', 'Crypto', 'Mutual Fund', 'Ecn Quote', 'Undefined']
-    colors = ['rgba(50, 171, 96, 0.6)', 'rgb(128, 0, 128)']
+    colors = ['#ED7D31', '#FFE6B3', '#FFD699', '#FFC27F', '#F5CCA0', '#FFB966', '#FFA54D', '#FF9933', '#FF8800']
 
     # Crear figura de pastel
     fig = go.Figure(data=[go.Pie(labels=assets, values=distribution_values, marker=dict(colors=colors))])
@@ -164,6 +174,8 @@ def icicle_main_symbols_graph():
     assets = ['EQUITY', 'INDEX', 'FOREX', 'ETF', 'CRYPTO', 'MUTUALFUND', 'ECNQUOTE', 'UNDEFINED']
     parent_assets = ['Assets'] * len(assets)
 
+    colors = ['#994D1C', '#E48F45', '#ED7D31', '#FFE6B3', '#FFD699', '#FFC27F', '#F5CCA0', '#FFB966', '#FFA54D', '#FF9933', '#FF8800']
+
     names[1:1] = assets
     parents[1:1] = parent_assets
     values[0] = sum(values[1:9])
@@ -174,7 +186,9 @@ def icicle_main_symbols_graph():
     fig = px.treemap(
         names=names,
         parents=parents,
-        values=values
+        values=values,
+        color=values,
+        color_continuous_scale=colors 
     )
 
     fig.update_layout(margin = dict(t=50, l=25, r=25, b=25))
@@ -183,5 +197,41 @@ def icicle_main_symbols_graph():
     graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
     top_winners_per_asset_icicle_json = graph
+    
+    return graph
+
+
+def balance_1_graph():
+    global balance_1_graph_json
+
+    if balance_1_graph_json:
+        return balance_1_graph_json
+    
+    dates = []
+    balance = []
+
+    db = firestore.Client(project='financial-news-analysis-410223')
+
+    wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    for w in wallet:
+        w_dict = w.to_dict()
+        balance.append(w_dict['balance'])
+        dates.append(w_dict['date'].strftime("%m-%d"))
+
+    column_name = 'Balance [%]'
+    data = {'Date': dates}
+    data[column_name] = [ b for b in balance ]
+
+    # Create a DataFrame
+    df = pd.DataFrame(data)
+
+    fig = px.area(df, x='Date', y="Balance [%]")
+    fig.update_xaxes(title='')
+    fig.update_xaxes(minor=dict(ticks="inside"))
+    fig.update_traces(line_shape='linear', line=dict(color='orange'))
+
+    graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    balance_1_graph_json = graph
     
     return graph
