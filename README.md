@@ -8,7 +8,7 @@ Analyze financial news and simulate investment portfolios with cutting-edge AI t
 
 NewVibe is a web application that provides a sentiment analysis Dashboards for all types of assets using Google Cloud AI services. The application allows users to analyze sentiment data from financial news and visualize the information in Dashboards.
 
-Check out the [web](https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/) page of the project: [https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/](https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/)
+Check out the [web](https://newvibe-zkyqw5ggha-rj.a.run.app/) page of the project: [https://newvibe-zkyqw5ggha-rj.a.run.app/](https://newvibe-zkyqw5ggha-rj.a.run.app/)
 
 First, take a look at some screenshots of the project:
 
