@@ -49,19 +49,31 @@
                         button.setAttribute('data-bs-toggle', 'collapse');
                         button.setAttribute('data-bs-target', `#collapse${index + 1}`);
                         button.setAttribute('aria-expanded', 'false');
-                        button.setAttribute('aria-controls', `collapse${index + 1}`);
-
-                        // Contenido del botón
-                        const divContainer1 = document.createElement('div');
-                        divContainer1.classList.add('container', 'text-start');
-                        divContainer1.textContent = (page-1)*20 + index + 1;
+                        button.setAttribute('aria-controls', `collapse${index + 1}`);                        
 
                         const divContainer2 = document.createElement('div');
-                        divContainer2.classList.add('container', 'col-2', 'text-start');
-                        divContainer2.textContent = noticia.time_published;
+                        divContainer2.classList.add('container', 'col-1', 'text-start', 'd-none', 'd-lg-block');
+
+                        var dateString = noticia.time_published;
+
+                        // Create a date object
+                        var date = new Date(dateString);
+
+                        // Get date components
+                        var day = date.getUTCDate();
+                        var month = date.getUTCMonth() + 1; // Months in JavaScript are 0 to 11
+                        var year = date.getUTCFullYear() % 100; // Get only the last two digits of the year
+                        var hours = date.getUTCHours();
+                        var minutes = date.getUTCMinutes();
+                        var seconds = date.getUTCSeconds();
+
+                        // Format the date according to your specifications
+                        var formattedDate = `${day}/${month}/${year < 10 ? '0' : ''}${year} ${hours < 10 ? '00' : hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+                        divContainer2.textContent = formattedDate;                   
 
                         const divContainer3 = document.createElement('div');
-                        divContainer3.classList.add('container', 'col-6', 'text-start', 'fs-6');                        
+                        divContainer3.classList.add('container', 'col-7', 'text-start', 'fs-6');                        
                         externalLink = document.createElement('a');
                         externalLink.classList.add('text-reset', 'link-dark', 'link-offset-2', 'link-underline-opacity-25', 'link-underline-opacity-100-hove');
                         externalLink.setAttribute('href', noticia.url);
@@ -89,7 +101,6 @@
                         });
 
                         // Adjuntar los elementos al botón
-                        button.appendChild(divContainer1);
                         button.appendChild(divContainer2);
                         button.appendChild(divContainer3);
                         button.appendChild(divContainer4);

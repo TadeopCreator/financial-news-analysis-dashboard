@@ -19,7 +19,7 @@
     <div id="multiCollapseHighSentiment" class="multi-collapse collapse show">
 
         <h3 class="mt-4 mb-4">High Sentiment</h3>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center m-1">
     
             <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
                 <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
@@ -103,7 +103,7 @@
     </div>
     
     <div id="multiCollapseLowSentiment" class="multi-collapse collapse">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center m-1">
             <h3 class="mt-4 mb-4">Low Sentiment</h3>
 <!--     
             <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
@@ -266,8 +266,25 @@
                         button.setAttribute('aria-controls', `collapse${index + 1}`);                        
 
                         const divContainerDate = document.createElement('div');
-                        divContainerDate.classList.add('container', 'col-2', 'text-start');
-                        divContainerDate.textContent = order.date;                                        
+                        divContainerDate.classList.add('container', 'col-2', 'text-start', 'd-none', 'd-lg-block');
+
+                        var dateString = order.date;
+
+                        // Create a date object
+                        var date = new Date(dateString);
+
+                        // Get date components
+                        var day = date.getUTCDate();
+                        var month = date.getUTCMonth() + 1; // Months in JavaScript are 0 to 11
+                        var year = date.getUTCFullYear() % 100; // Get only the last two digits of the year
+                        var hours = date.getUTCHours();
+                        var minutes = date.getUTCMinutes();
+                        var seconds = date.getUTCSeconds();
+
+                        // Format the date according to your specifications
+                        var formattedDate = `${day}/${month}/${year < 10 ? '0' : ''}${year} ${hours < 10 ? '00' : hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+                        divContainerDate.textContent = formattedDate;                
 
                         const divContainerTicker = document.createElement('div');
                         divContainerTicker.classList.add('container', 'col-1', 'text-start', 'fs-6');                        
@@ -288,8 +305,8 @@
                         divContainerPl.textContent = Math.round(order.pl_percent * 100) / 100 + "%"
 
                         const divContainerTerm = document.createElement('div');
-                        divContainerTerm.classList.add('container', 'col-1', 'text-start');
-                        divContainerTerm.textContent = order.term                                            
+                        divContainerTerm.classList.add('container', 'col-1', 'text-start', 'd-none', 'd-lg-block');
+                        divContainerTerm.textContent = order.term                                         
 
                         // Adjuntar los elementos al botón                        
                         button.appendChild(divContainerDate)
