@@ -5,6 +5,7 @@
 [<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/>](https://www.linkedin.com/in/tadeo-deluca/)
 
 This project is a Flask application that provides a sentiment analysis dashboard for stocks using Google Cloud Firestore. The application allows users to analyze sentiment data from news related to finance and visualize the information in a dashboard format.
+Check out the [web](https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/) page of the project: [https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/](https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/)
 
 <div align="center">
   <img src="app/static/stocks-dashboard-flow.jpg" alt="Financial News Analysis Architecture">
