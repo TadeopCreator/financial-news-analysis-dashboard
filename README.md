@@ -4,8 +4,23 @@
 [<img src="https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white"/>](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
 [<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/>](https://www.linkedin.com/in/tadeo-deluca/)
 
-This project is a Flask application that provides a sentiment analysis dashboard for stocks using Google Cloud Firestore. The application allows users to analyze sentiment data from news related to finance and visualize the information in a dashboard format.
+This project is a Flask application that provides a sentiment analysis dashboard for stocks using Google Cloud. The application allows users to analyze sentiment data from news related to finance and visualize the information in a dashboard format.
+
 Check out the [web](https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/) page of the project: [https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/](https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/)
+
+First, take a look at some screenshots of the project:
+
+<div align="center">
+  <img src="images/Screen Shot 2024-01-20 at 23.23.55.png" alt="Financial News Dashboard Screenshot 1">
+</div>
+
+<div align="center">
+  <img src="images/Screen Shot 2024-01-20 at 23.24.15.png" alt="Financial News Dashboard Screenshot 2">
+</div>
+
+## Architecture
+
+Here is the architecture of the project with the Google Cloud services that are used and how they are connected:
 
 <div align="center">
   <img src="app/static/stocks-dashboard-flow.jpg" alt="Financial News Analysis Architecture">
