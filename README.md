@@ -1,10 +1,12 @@
-# Financial News Analysis Dashboard with Google Cloud
+# NewVibe
 
 [<img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white"/>](https://flask.palletsprojects.com/en/) [<img src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white"/>](https://hub.docker.com/r/tadeop/financial-news-dashboard)
 [<img src="https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white"/>](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
 [<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/>](https://www.linkedin.com/in/tadeo-deluca/)
 
-This project is a Flask application that provides a sentiment analysis dashboard for stocks using Google Cloud. The application allows users to analyze sentiment data from news related to finance and visualize the information in a dashboard format.
+Analyze financial news and simulate investment portfolios with cutting-edge AI technology.
+
+NewVibe is a web application that provides a sentiment analysis Dashboards for all types of assets using Google Cloud AI services. The application allows users to analyze sentiment data from financial news and visualize the information in Dashboards.
 
 Check out the [web](https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/) page of the project: [https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/](https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/)
 
