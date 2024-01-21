@@ -25,7 +25,14 @@
                 </div>
             </div>
         </nav>
+
+        {% if message %}
+        <div class="bg-warning text-center p-2">
+            <span class=""><strong>Hey!</strong> This page is currently under development.</span>
+        </div>
+        {% endif %}
     </header>
+    
 
     <div class="container mt-3">
         {% block body %}{% endblock %}

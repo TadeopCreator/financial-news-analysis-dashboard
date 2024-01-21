@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from google.cloud import firestore
-from modules.graph_module import pie_main_symbols_graph, bar_graph, pie_assets_distribution_graph, icicle_main_symbols_graph
+from app.modules.graph_module import pie_main_symbols_graph, bar_graph, pie_assets_distribution_graph, icicle_main_symbols_graph, balance_1_graph
 
 news_list = []  # news_list is a global list variable that will hold the news articles 
 # retrieved from the database for the current page.
@@ -15,7 +15,7 @@ selected_page = 1  # Sets the global selected_page variable to 1. This will be t
 app = Flask(__name__)
 
 def round_filter(value, decimals=0):
-    # Rounds a number to the given number of decimal places.    
+    # Rounds a number to the given number of decimal places.
     try:
         value = round(float(value), decimals)*100
         value = round(value, decimals)        
@@ -204,6 +204,19 @@ def get_graphs():
 
     return list_data
 
+@app.route('/callback_graph_balance_1', methods=['POST', 'GET'])
+def cb_graph_balance_1():
+    return balance_1_graph()
+
+@app.route('/get_balances', methods=['GET'])
+def get_balances():
+
+    balance1 = balance_1_graph()
+
+    list_data = [balance1]
+
+    return list_data
+
 
 @app.route('/news_insights')
 def news_insights():
@@ -216,15 +229,8 @@ def about():
 
 
 @app.route('/portfolio')
-def portfolio():
-    # db = firestore.Client(project='financial-news-analysis-410223')
-
-    # wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(1).stream()
-    # for w in wallet:
-    #     w_dict = w.to_dict
-    #     print(w_dict)
-    
-    return render_template('portfolio.html')
+def portfolio():    
+    return render_template('portfolio.html', message="development")
 
 
 @app.errorhandler(404)
