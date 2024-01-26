@@ -39,7 +39,7 @@
                 </div>
             {% endif %}
             
-            {% if new['banner_image'] %}
+            {% if new['banner_image'] and new['source'] != "Benzinga" %}
                 <div class="container col-md-8 mb-4 text-center">
                     <img class="img-fluid rounded" src="{{ new['banner_image'] }}" alt="Banner Image">
                 </div>
