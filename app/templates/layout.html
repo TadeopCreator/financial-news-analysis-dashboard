@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>News Analysis</title>
+    <title>NewVibe</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
@@ -27,13 +27,12 @@
             </div>
         </nav>
 
-        {% if message %}
+        {% if message=="development" %}
         <div class="bg-warning text-center p-2">
-            <span class=""><strong>Hey!</strong> This page is currently under development.</span>
+            <span class=""><strong>Hey!</strong> This page is currently under development</span>
         </div>
         {% endif %}
     </header>
-    
 
     <div class="container mt-3">
         {% block body %}{% endblock %}
