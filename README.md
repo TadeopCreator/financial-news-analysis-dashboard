@@ -8,9 +8,13 @@ Analyze financial news and simulate investment portfolios with cutting-edge AI t
 
 NewVibe is a web application that provides a sentiment analysis Dashboards for all types of assets using Google Cloud AI services. The application allows users to analyze sentiment data from financial news and visualize the information in Dashboards.
 
-Check out the [web](https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/) page of the project: [https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/](https://financial-news-dashboard-zkyqw5ggha-rj.a.run.app/)
+Check out the [web](https://newvibe-zkyqw5ggha-rj.a.run.app/) page of the project: [https://newvibe-zkyqw5ggha-rj.a.run.app/](https://newvibe-zkyqw5ggha-rj.a.run.app/)
 
-First, take a look at some screenshots of the project:
+## Why NewVibe?
+
+Created to simplify finance, this platform invites you to explore the financial world, make informed decisions, and test if there's real value in news-based investing
+
+## Screenshots
 
 <div align="center">
   <img src="images/Screen Shot 2024-01-20 at 23.23.55.png" alt="Financial News Dashboard Screenshot 1">
@@ -28,15 +32,15 @@ Here is the architecture of the project with the Google Cloud services that are 
   <img src="app/static/stocks-dashboard-flow.jpg" alt="Financial News Analysis Architecture">
 </div>
 
-## Installation
+## Quickstart
 
 To run this project locally, make sure you have Docker installed on your machine.
 
 1. Clone this repository:
 
     ```bash
-    git clone [https://github.com/your-username/stocks-sentiment-dashboard.git](https://github.com/TadeopCreator/stocks-sentiment-dashboard.git)
-    cd stocks-sentiment-dashboard
+    git clone https://github.com/TadeopCreator/newvibe.git
+    cd app
     ```
 
 2. Place your `application_default_credentials.json` file (Google Cloud service account key) inside the main directory.
@@ -44,13 +48,13 @@ To run this project locally, make sure you have Docker installed on your machine
 3. Build the Docker image:
 
     ```bash
-    docker build -t stocks-dashboard .
+    docker build -t newvibe ../
     ```
 
 4. Run the Docker container:
 
     ```bash
-    docker run -p 5000:5000 stocks-dashboard
+    docker run -p 5000:5000 newvibe
     ```
 
 5. Access the application in your browser at `http://localhost:5000`.
@@ -61,8 +65,8 @@ Before running the application, ensure you have the necessary dependencies liste
 
 ## Usage
 
-- Once the application is running, access the provided URL in your browser to interact with the sentiment analysis dashboard.
-- Use the dashboard to explore sentiment data related to different stocks.
+- Once the application is running, access the provided URL in your browser to interact with NewVibe.
+- Use the dashboard to explore sentiment data related to different assets.
 - Ensure proper permissions and access to Google Cloud services for accurate data retrieval and analysis.
 
 ## License
