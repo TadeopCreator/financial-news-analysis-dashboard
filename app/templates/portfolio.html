@@ -9,7 +9,7 @@
     <p>Explore 12 distinctive portfolios designed based on sentiment, risk tolerance, and short-selling preferences. Each portfolio tells a nuanced story of how news-driven insights guide strategic investment decisions.</p>
 
     <div class="btn-group" role="group">
-        <input type="radio" class="btn-check" data-bs-toggle="collapse" data-bs-target=".multi-collapse" href="#multiCollapseHighSentiment" role="button" aria-expanded="true" aria-controls="multiCollapseHighSentiment multiCollapseLowSentiment" name="btnradio" id="btnradio1" autocomplete="off" checked>
+        <input type="radio" class="btn-check" disabled data-bs-toggle="collapse" data-bs-target=".multi-collapse" href="#multiCollapseHighSentiment" role="button" aria-expanded="true" aria-controls="multiCollapseHighSentiment multiCollapseLowSentiment" name="btnradio" id="btnradio1" autocomplete="off" checked>
         <label class="btn btn-outline-dark" for="btnradio1">High Sentiment</label>
       
         <input type="radio" class="btn-check" data-bs-toggle="collapse" data-bs-target=".multi-collapse" href="#multiCollapseLowSentiment" role="button" aria-expanded="false" aria-controls="multiCollapseHighSentiment multiCollapseLowSentiment" name="btnradio" id="btnradio2" autocomplete="off">
@@ -34,7 +34,7 @@
                     <br><br><br><br><br><br>
                 </div>
             </div>
-            <!-- <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
+            <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
                 <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
                     Medium risk, short allowed
                 </div>
@@ -98,14 +98,14 @@
                     </div>
                     <br><br><br><br><br><br>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
     
     <div id="multiCollapseLowSentiment" class="multi-collapse collapse">
         <div class="row justify-content-center m-1">
             <h3 class="mt-4 mb-4">Low Sentiment</h3>
-<!--     
+    
             <div class="container col-lg-5 border rounded-4 shadow m-2 text-center">
                 <div class="text-start mt-4 ms-4 fs-5 fw-semibold">
                     All risks, short allowed
@@ -183,7 +183,7 @@
                     </div>
                     <br><br><br><br><br><br>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
 
@@ -206,12 +206,103 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
-    window.addEventListener('resize', function(event) {        
+    function getBalances() {
         $.getJSON({
             url: "/callback_graph_balance_1", success: function (result) {                    
                 Plotly.newPlot('balance-1', result, {staticPlot: true});
             }
         });
+
+        $.getJSON({
+            url: "/callback_graph_balance_2", success: function (result) {                    
+                Plotly.newPlot('balance-2', result, {staticPlot: true});
+            }
+        });
+
+        $.getJSON({
+            url: "/callback_graph_balance_3", success: function (result) {                    
+                Plotly.newPlot('balance-3', result, {staticPlot: true});
+            }
+        });
+
+        $.getJSON({
+            url: "/callback_graph_balance_4", success: function (result) {                    
+                Plotly.newPlot('balance-4', result, {staticPlot: true});
+            }
+        });
+
+        $.getJSON({
+            url: "/callback_graph_balance_5", success: function (result) {                    
+                Plotly.newPlot('balance-5', result, {staticPlot: true});
+            }
+        });
+
+        $.getJSON({
+            url: "/callback_graph_balance_6", success: function (result) {                    
+                Plotly.newPlot('balance-6', result, {staticPlot: true});
+            }
+        });
+
+        $.getJSON({
+            url: "/callback_graph_balance_7", success: function (result) {                    
+                Plotly.newPlot('balance-7', result, {staticPlot: true});
+            }
+        });
+
+        $.getJSON({
+            url: "/callback_graph_balance_8", success: function (result) {                    
+                Plotly.newPlot('balance-8', result, {staticPlot: true});
+            }
+        });
+
+        $.getJSON({
+            url: "/callback_graph_balance_9", success: function (result) {                    
+                Plotly.newPlot('balance-9', result, {staticPlot: true});
+            }
+        });
+
+        $.getJSON({
+            url: "/callback_graph_balance_10", success: function (result) {                    
+                Plotly.newPlot('balance-10', result, {staticPlot: true});
+            }
+        });
+
+        $.getJSON({
+            url: "/callback_graph_balance_11", success: function (result) {                    
+                Plotly.newPlot('balance-11', result, {staticPlot: true});
+            }
+        });
+
+        $.getJSON({
+            url: "/callback_graph_balance_12", success: function (result) {                    
+                Plotly.newPlot('balance-12', result, {staticPlot: true});
+            }
+        });
+    };
+</script>
+
+<script>
+    $('#btnradio1').click(function () {
+        // Desactivar btnradio1
+        $(this).prop('disabled', true);
+        // Activar btnradio2
+        $('#btnradio2').prop('disabled', false);
+        // Llamar a la función getBalances
+        getBalances();
+    });
+
+    // Asociar el evento 'click' al btnradio2
+    $('#btnradio2').click(function () {
+        // Desactivar btnradio2
+        $(this).prop('disabled', true);
+        // Activar btnradio1
+        $('#btnradio1').prop('disabled', false);
+        // Llamar a la función getBalances
+        getBalances();
+    });
+
+    window.addEventListener('resize', function(event) {        
+       getBalances()
     });
 </script>
 
@@ -224,14 +315,69 @@
 
             success: function(data) {                                
                 balance1 =  JSON.parse(data[0])
+                balance2 = JSON.parse(data[1])
+                balance3 = JSON.parse(data[2])
+                balance4 = JSON.parse(data[3])
+                balance5 = JSON.parse(data[4])
+                balance6 = JSON.parse(data[5])
+                balance7 = JSON.parse(data[6])
+                balance8 = JSON.parse(data[7])
+                balance9 = JSON.parse(data[8])
+                balance10 = JSON.parse(data[9])
+                balance11 = JSON.parse(data[10])
+                balance12 = JSON.parse(data[11])                
                 
                 const c1 = document.getElementById('balance-1');
-                c1.innerHTML = ''               
+                c1.innerHTML = ''
                 
-                Plotly.newPlot('balance-1', balance1)           
+                const c2 = document.getElementById('balance-2');
+                c2.innerHTML = ''
+
+                const c3 = document.getElementById('balance-3');
+                c3.innerHTML = ''
+
+                const c4 = document.getElementById('balance-4');
+                c4.innerHTML = ''
+
+                const c5 = document.getElementById('balance-5');
+                c5.innerHTML = ''
+
+                const c6 = document.getElementById('balance-6');
+                c6.innerHTML = ''
+
+                const c7 = document.getElementById('balance-7');
+                c7.innerHTML = ''
+
+                const c8 = document.getElementById('balance-8');
+                c8.innerHTML = ''
+
+                const c9 = document.getElementById('balance-9');
+                c9.innerHTML = ''
+
+                const c10 = document.getElementById('balance-10');
+                c10.innerHTML = ''
+
+                const c11 = document.getElementById('balance-11');
+                c11.innerHTML = ''
+
+                const c12 = document.getElementById('balance-12');
+                c12.innerHTML = ''
+                
+                Plotly.newPlot('balance-1', balance1)
+                Plotly.newPlot('balance-2', balance2)
+                Plotly.newPlot('balance-3', balance3)
+                Plotly.newPlot('balance-4', balance4)
+                Plotly.newPlot('balance-5', balance5)
+                Plotly.newPlot('balance-6', balance6)
+                Plotly.newPlot('balance-7', balance7)
+                Plotly.newPlot('balance-8', balance8)
+                Plotly.newPlot('balance-9', balance9)
+                Plotly.newPlot('balance-10', balance10)
+                Plotly.newPlot('balance-11', balance11)
+                Plotly.newPlot('balance-12', balance12)                
             },
             error: function(error) {
-                console.log('Error al obtener las graficas:', error);
+                console.log('Error when getting graphsz:', error);
             }
         });
     });

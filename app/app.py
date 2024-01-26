@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from google.cloud import firestore
-from modules.graph_module import pie_main_symbols_graph, bar_graph, pie_assets_distribution_graph, icicle_main_symbols_graph, balance_1_graph
+from app.modules.graph_module import pie_main_symbols_graph, bar_graph, pie_assets_distribution_graph, icicle_main_symbols_graph, balance_graph
 
 news_list = []  # news_list is a global list variable that will hold the news articles 
 # retrieved from the database for the current page.
@@ -11,6 +11,8 @@ selected_new_info = {}  # selected_new_info holds information about the currentl
 
 selected_page = 1  # Sets the global selected_page variable to 1. This will be the default page
 # shown on the index page if no specific page is requested.
+
+NUMBER_OF_BALANCES = 12
 
 app = Flask(__name__)
 
@@ -206,16 +208,61 @@ def get_graphs():
 
 @app.route('/callback_graph_balance_1', methods=['POST', 'GET'])
 def cb_graph_balance_1():
-    return balance_1_graph()
+    return balance_graph(1)
+
+@app.route('/callback_graph_balance_2', methods=['POST', 'GET'])
+def cb_graph_balance_2():
+    return balance_graph(2)
+
+@app.route('/callback_graph_balance_3', methods=['POST', 'GET'])
+def cb_graph_balance_3():
+    return balance_graph(3)
+
+@app.route('/callback_graph_balance_4', methods=['POST', 'GET'])
+def cb_graph_balance_4():
+    return balance_graph(4)
+
+@app.route('/callback_graph_balance_5', methods=['POST', 'GET'])
+def cb_graph_balance_5():
+    return balance_graph(5)
+
+@app.route('/callback_graph_balance_6', methods=['POST', 'GET'])
+def cb_graph_balance_6():
+    return balance_graph(6)
+
+@app.route('/callback_graph_balance_7', methods=['POST', 'GET'])
+def cb_graph_balance_7():
+    return balance_graph(7)
+
+@app.route('/callback_graph_balance_8', methods=['POST', 'GET'])
+def cb_graph_balance_8():
+    return balance_graph(8)
+
+@app.route('/callback_graph_balance_9', methods=['POST', 'GET'])
+def cb_graph_balance_9():
+    return balance_graph(9)
+
+@app.route('/callback_graph_balance_10', methods=['POST', 'GET'])
+def cb_graph_balance_10():
+    return balance_graph(10)
+
+@app.route('/callback_graph_balance_11', methods=['POST', 'GET'])
+def cb_graph_balance_11():
+    return balance_graph(11)
+
+@app.route('/callback_graph_balance_12', methods=['POST', 'GET'])
+def cb_graph_balance_12():
+    return balance_graph(12)
 
 @app.route('/get_balances', methods=['GET'])
-def get_balances():
+def get_balances():    
+    
+    list_balances = []
 
-    balance1 = balance_1_graph()
+    for i in range(NUMBER_OF_BALANCES):
+        list_balances.append(balance_graph(i+1))
 
-    list_data = [balance1]
-
-    return list_data
+    return list_balances
 
 
 @app.route('/news_insights')

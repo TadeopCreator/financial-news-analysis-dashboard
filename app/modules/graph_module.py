@@ -12,12 +12,21 @@ top_winners_per_asset_icicle_json = {}  # top_winners_per_asset_icicle_json hold
 average_sentiment_score_per_asset_bars_json = {}  # average_sentiment_score_per_asset_bars_json holds the bar chart data
 asset_distribution_per_type_json = {}  # asset_distribution_per_type_json holds the bar chart data for the asset distribution per type.
 
-balance_1_graph_json = {}  # balance_1_graph_json holds the bar chart data for the balance 1 graph.
-balance_2_graph_json = {}  # balance_2_graph_json holds the bar chart data for the balance 2 graph.
-balance_3_graph_json = {}  # balance_3_graph_json holds the bar chart data for the balance 3 graph.
-balance_4_graph_json = {}  # balance_4_graph_json holds the bar chart data for the balance 4 graph.
-balance_5_graph_json = {}  # balance_5_graph_json holds the bar chart data for the balance 5 graph.
-balance_6_graph_json = {}  # balance_6_graph_json holds the bar chart data for the balance 6 graph.
+# balances_graph_json holds each balance graph for portfolio page.
+balances_graph_json = {
+    1: None,
+    2: None,
+    3: None,
+    4: None,
+    5: None,
+    6: None,
+    7: None,
+    8: None,
+    9: None,
+    10: None,
+    11: None,
+    12: None
+}
 
 
 def pie_main_symbols_graph(): 
@@ -201,18 +210,44 @@ def icicle_main_symbols_graph():
     return graph
 
 
-def balance_1_graph():
-    global balance_1_graph_json
+def balance_graph(balance_number):
+    global balances_graph_json
 
-    if balance_1_graph_json:
-        return balance_1_graph_json
+    if balances_graph_json[balance_number]:
+        return balances_graph_json[balance_number]
+
+    db = firestore.Client(project='financial-news-analysis-410223')
+
+    if balance_number == 1:
+        wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    elif balance_number == 2:
+        wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    elif balance_number == 3:
+        wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    elif balance_number == 4:
+        wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    elif balance_number == 5:
+        wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    elif balance_number == 6:
+        wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-with-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    elif balance_number == 7:
+        wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    elif balance_number == 8:
+        wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    elif balance_number == 9:
+        wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-no-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    elif balance_number == 10:
+        wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    elif balance_number == 11:
+        wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-mid-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    elif balance_number == 12:
+        wallet = db.collection("wallets/wallets-cointainer/low-sentiment-day-with-short-low-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
+    else:
+        return
     
     dates = []
     balance = []
 
-    db = firestore.Client(project='financial-news-analysis-410223')
-
-    wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
     for w in wallet:
         w_dict = w.to_dict()
         balance.append(w_dict['balance'])
@@ -232,6 +267,6 @@ def balance_1_graph():
 
     graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-    balance_1_graph_json = graph
+    balances_graph_json[balance_number] = graph
     
     return graph
