@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from google.cloud import firestore
-from app.modules.graph_module import pie_main_symbols_graph, bar_graph, pie_assets_distribution_graph, icicle_main_symbols_graph, balance_graph
+from modules.graph_module import pie_main_symbols_graph, bar_graph, pie_assets_distribution_graph, icicle_main_symbols_graph, balance_graph
 
 news_list = []  # news_list is a global list variable that will hold the news articles 
 # retrieved from the database for the current page.
