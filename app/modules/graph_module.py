@@ -28,6 +28,7 @@ balances_graph_json = {
     12: None
 }
 
+db = firestore.Client(project='financial-news-analysis-410223')
 
 def pie_main_symbols_graph(): 
     global top_10_assets_pie_json
@@ -39,7 +40,6 @@ def pie_main_symbols_graph():
     labels = []
     values = []
 
-    db = firestore.Client(project='financial-news-analysis-410223')
     # Get top 10 orders with major pl_percent
     orders = db.collection("orders").order_by('pl_percent', direction=firestore.Query.DESCENDING).limit(10).stream()    
     
@@ -157,12 +157,14 @@ def icicle_main_symbols_graph():
 
     today = datetime.now()
     last_week_start = today - timedelta(days=(today.weekday() + 7))  # Last Monday
-    last_week_end = last_week_start + timedelta(days=4)  # Last Friday
-
-    db = firestore.Client(project='financial-news-analysis-410223')
+    last_week_end = last_week_start + timedelta(days=4)  # Last Friday    
 
     # Get top 10 orders with major pl_percent, from last week
-    orders_unsorted = db.collection("orders").where("date", ">=", last_week_start).where("date", "<=", last_week_end).stream()    
+    orders_unsorted = db.collection("orders").where(filter=firestore.FieldFilter("date", ">=", last_week_start)).where(filter=firestore.FieldFilter("date", "<=", last_week_end)).stream()
+
+    # cities_ref.where(
+    # filter=FieldFilter("state", "==", "CA")
+    # ).where(filter=FieldFilter("population", ">", 1000000))
 
     for order in orders_unsorted:
         last_week_orders.append(order.to_dict())
@@ -230,8 +232,6 @@ def balance_graph(balance_number):
 
     if balances_graph_json[balance_number]:
         return balances_graph_json[balance_number]
-
-    db = firestore.Client(project='financial-news-analysis-410223')
 
     if balance_number == 1:
         wallet = db.collection("wallets/wallets-cointainer/high-sentiment-day-no-short-all-risk").order_by('date', direction=firestore.Query.DESCENDING).limit(5).stream()
