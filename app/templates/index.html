@@ -3,7 +3,7 @@
 {% block body %}
 <header>
     <h2 class="mb-3">Recent news</h2>
-    <hr/>
+    <hr class="my-4">
     <p class="mb-4">Explore the latest analyzed news. Click on the 'Explore Details' button to see more information and insights behind each headline</p>
 </header>
 <main>
@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <div id="pagination"></div>
+    <div id="pagination"></div>    
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -74,8 +74,7 @@
 
                         const divContainer3 = document.createElement('div');
                         divContainer3.classList.add('container', 'col-7', 'text-start', 'fs-6');                        
-                        externalLink = document.createElement('a');
-                        externalLink.classList.add('text-reset', 'link-dark', 'link-offset-2', 'link-underline-opacity-25', 'link-underline-opacity-100-hove');
+                        externalLink = document.createElement('span');                        
                         externalLink.setAttribute('href', noticia.url);
                         externalLink.setAttribute('target', '_blank');
                         externalLink.textContent = noticia.title;                        
@@ -118,7 +117,7 @@
                         accordionBody.classList.add('accordion-body');
                         const analysisLink = document.createElement('a');
                         analysisLink.setAttribute('type', 'button');
-                        analysisLink.classList.add('btn', 'btn-outline-dark');
+                        analysisLink.classList.add('btn', 'btn-light');
                         analysisLink.setAttribute('href', '/new/' + (index + 1)); // Adjust href as per your Flask route
                         analysisLink.textContent = 'Explore Details';
                         accordionBody.appendChild(analysisLink);

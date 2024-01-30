@@ -10,10 +10,10 @@
 
     <div class="btn-group" role="group">
         <input type="radio" class="btn-check" disabled data-bs-toggle="collapse" data-bs-target=".multi-collapse" href="#multiCollapseHighSentiment" role="button" aria-expanded="true" aria-controls="multiCollapseHighSentiment multiCollapseLowSentiment" name="btnradio" id="btnradio1" autocomplete="off" checked>
-        <label class="btn btn-outline-dark" for="btnradio1">High Sentiment</label>
+        <label class="btn" for="btnradio1">High Sentiment</label>
       
         <input type="radio" class="btn-check" data-bs-toggle="collapse" data-bs-target=".multi-collapse" href="#multiCollapseLowSentiment" role="button" aria-expanded="false" aria-controls="multiCollapseHighSentiment multiCollapseLowSentiment" name="btnradio" id="btnradio2" autocomplete="off">
-        <label class="btn btn-outline-dark" for="btnradio2">Low Sentiment</label>
+        <label class="btn" for="btnradio2">Low Sentiment</label>
     </div>          
 
     <div id="multiCollapseHighSentiment" class="multi-collapse collapse show">
@@ -284,7 +284,7 @@
 <script>
     $('#btnradio1').click(function () {
         // Desactivar btnradio1
-        $(this).prop('disabled', true);
+        $(this).prop('disabled', true);        
         // Activar btnradio2
         $('#btnradio2').prop('disabled', false);
         // Llamar a la función getBalances
@@ -493,7 +493,7 @@
 
                         const newLink = document.createElement('a');
                         newLink.setAttribute('type', 'button');
-                        newLink.classList.add('btn', 'btn-outline-dark', 'row',  'mt-2');
+                        newLink.classList.add('btn', 'btn-light', 'row',  'mt-2');
                         newLink.textContent = 'View New';
 
                         newLink.addEventListener('click', function(event) {
