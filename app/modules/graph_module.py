@@ -52,9 +52,15 @@ def pie_main_symbols_graph():
     
     colors = ['#994D1C', '#E48F45', '#ED7D31', '#FFE6B3', '#FFD699', '#FFC27F', '#F5CCA0', '#FFB966', '#FFA54D', '#FF9933', '#FF8800']
 
+    layout = go.Layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='gray')
+    )
+
     # Create a Pie chart with specified colors
-    fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.3, marker=dict(colors=colors))])
-    fig.update_traces(textposition='inside', textfont_size=18)        
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.3, marker=dict(colors=colors))], layout=layout)
+    fig.update_traces(textposition='inside', textfont_size=18)    
 
     graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
@@ -86,8 +92,11 @@ def bar_graph(sentiment_values):
     # Diseño de la gráfica
     fig.update_layout(        
         xaxis=dict(title='Assets'),
-        yaxis=dict(title='Avg. Sentiment Score [%]')
-    )
+        yaxis=dict(title='Avg. Sentiment Score [%]'),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='gray')
+    )    
 
     # Change the bar mode
     fig.update_layout(barmode='group')
@@ -109,11 +118,17 @@ def pie_assets_distribution_graph(distribution_values):
     assets = ['Equity', 'Index', 'Forex', 'ETF', 'Crypto', 'Mutual Fund', 'Ecn Quote', 'Undefined']
     colors = ['#ED7D31', '#FFE6B3', '#FFD699', '#FFC27F', '#F5CCA0', '#FFB966', '#FFA54D', '#FF9933', '#FF8800']
 
+    layout = go.Layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='gray')
+    )
+
     # Crear figura de pastel
-    fig = go.Figure(data=[go.Pie(labels=assets, values=distribution_values, marker=dict(colors=colors))])
+    fig = go.Figure(data=[go.Pie(labels=assets, values=distribution_values, marker=dict(colors=colors))], layout=layout)
 
     # Diseño de la gráfica    
-    fig.update_traces(textposition='inside', textfont_size=18)    
+    fig.update_traces(textposition='inside', textfont_size=18)  
 
     graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
@@ -201,7 +216,7 @@ def icicle_main_symbols_graph():
     )
 
     fig.update_layout(margin = dict(t=50, l=25, r=25, b=25))
-    fig.update_layout(font_family="Roboto")
+    fig.update_layout(font_family="Roboto",paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='gray'))
 
     graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
@@ -261,9 +276,15 @@ def balance_graph(balance_number):
     df = pd.DataFrame(data)
 
     fig = px.area(df, x='Date', y="Balance [%]")
-    fig.update_xaxes(title='')
+    fig.update_xaxes(title='', tickfont=dict(color='gray'), showgrid=False)
+    fig.update_yaxes(tickfont=dict(color='gray'), showgrid=False)
     fig.update_xaxes(minor=dict(ticks="inside"))
     fig.update_traces(line_shape='linear', line=dict(color='orange'))
+
+    fig.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
 
     graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
