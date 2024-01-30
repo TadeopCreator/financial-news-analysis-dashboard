@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from google.cloud import firestore
-from modules.graph_module import pie_main_symbols_graph, bar_graph, pie_assets_distribution_graph, icicle_main_symbols_graph, balance_graph
+from app.modules.graph_module import pie_main_symbols_graph, bar_graph, pie_assets_distribution_graph, icicle_main_symbols_graph, balance_graph
 
 news_list = []  # news_list is a global list variable that will hold the news articles 
 # retrieved from the database for the current page.
@@ -13,6 +13,8 @@ selected_page = 1  # Sets the global selected_page variable to 1. This will be t
 # shown on the index page if no specific page is requested.
 
 NUMBER_OF_BALANCES = 12
+
+db = firestore.Client(project='financial-news-analysis-410223')
 
 app = Flask(__name__)
 
@@ -55,7 +57,6 @@ def get_orders():
     # Orders the results by descending date and limits to 10 documents.
     # Converts each document to a dictionary and stores in a list.
     # Returns the list of order dictionaries.
-    db = firestore.Client(project='financial-news-analysis-410223')
     orders = db.collection("orders").order_by('date', direction=firestore.Query.DESCENDING).limit(10).stream()
 
     orders_list = []
@@ -73,8 +74,7 @@ def get_news():
     # Orders articles by descending publish time. 
     # Offsets results by 20 per page and limits to 20 articles per page.
     global selected_page
-
-    db = firestore.Client(project='financial-news-analysis-410223')
+    
     if selected_page != 1:
         docs = db.collection("news").order_by('time_published', direction=firestore.Query.DESCENDING).offset(20*(selected_page-1)).limit(20).stream()
     else:
@@ -109,9 +109,7 @@ def new(index):
 def order_new():
     global news_list
 
-    id = str(request.get_json())
-
-    db = firestore.Client(project='financial-news-analysis-410223')
+    id = str(request.get_json())    
     
     new = db.collection("news").document(id).get().to_dict()
 
@@ -124,8 +122,7 @@ def cb_graph_1():
     return pie_main_symbols_graph()
 
 @app.route('/callback_graph_2', methods=['POST', 'GET'])
-def cb_graph_2():
-    db = firestore.Client(project='financial-news-analysis-410223')
+def cb_graph_2():    
     docs = db.collection("insights").document("insights-data")
 
     insights = docs.get()
@@ -144,8 +141,7 @@ def cb_graph_2():
     return bar_graph(sentiment_values)
 
 @app.route('/callback_graph_3', methods=['POST', 'GET'])
-def cb_graph_3():
-    db = firestore.Client(project='financial-news-analysis-410223')
+def cb_graph_3():    
     docs = db.collection("insights").document("insights-data")
 
     insights = docs.get()
@@ -171,8 +167,7 @@ def get_graphs():
     # Retrieves insights data from Firestore and generates graphs
     # Parses document into lists of values for graphing
     # Calls functions to generate each graph with data
-    # Returns list containing parsed doc and generated graphs
-    db = firestore.Client(project='financial-news-analysis-410223')
+    # Returns list containing parsed doc and generated graphs    
     docs = db.collection("insights").document("insights-data")
 
     insights = docs.get()
