@@ -139,7 +139,12 @@
                     var categories = ['Assets', 'EQUITY', 'INDEX', 'ETF', 'FOREX', 'CRYPTO', 'ECNQUOTE', 'MUTUAL FUND', 'undefined'];
                     for (var i = 0; i < categories.length; i++) {
                         var categoryDiv = document.createElement('div')
-                        categoryDiv.classList.add('text-start', 'mb-2')
+                        if (categories[i] == 'undefined') {
+                            categoryDiv.classList.add('text-start', 'mb-3')
+                        }
+                        else {
+                            categoryDiv.classList.add('text-start', 'mb-2')
+                        }
                         if (categories[i] == 'Assets') {
                             categoryDiv.textContent = "Total Assets: " + insights['total_assets']
                         }
